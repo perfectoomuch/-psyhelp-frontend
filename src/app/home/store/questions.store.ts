@@ -5,9 +5,14 @@ import type {
 } from '../types/question'
 
 export const useQuestionsStore = defineStore('questions', {
-	state: () => ({ questions: [], loading: true } as QuestionsStoreInterface),
+	state: () =>
+		({
+			questions: [],
+			formQuestions: [],
+			loading: true,
+		} as QuestionsStoreInterface),
 	actions: {
-		updateQuestions(data: QuestionInterface[]) {
+		setQuestions(data: QuestionInterface[]) {
 			this.questions = data
 			this.loading = false
 		},

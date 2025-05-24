@@ -8,7 +8,15 @@ export type QuestionInterface = {
 
 export type QuestionsStoreInterface = {
 	questions: QuestionInterface[]
+	formQuestions: FormQuestionInterface[]
 	loading: boolean
+}
+
+export type FormQuestionInterface = {
+	local_id: number
+	question: string
+	answer: string[]
+	field: string
 }
 
 export type QuestionFormItem = {

@@ -1,10 +1,19 @@
-<script setup lang="ts">
-import { Navigation } from '@/components/Navigation'
-</script>
-
 <template>
 	<div id="router" class="p-3 px-4">
-		<RouterView></RouterView>
+		<keep-alive>
+			<RouterView></RouterView>
+		</keep-alive>
 	</div>
-	<Navigation />
+	<Navigation :name="$route.name" />
 </template>
+
+<script>
+import { Navigation } from '../components/Navigation'
+
+export default {
+	components: {
+		Navigation,
+	},
+	created() {},
+}
+</script>

@@ -1,3 +1,5 @@
+import type { QuestionFormItem } from '@/app/home/types/question'
+
 export type SpecialistItemType = {
 	first_name: string
 	last_name: string
@@ -21,4 +23,10 @@ export type SpecialistItemType = {
 export type SpecialistStoreType = {
 	specialists: SpecialistItemType[]
 	loading: boolean
+}
+
+export type BidCreateType = {
+	specialist_id: string
+
+	form: QuestionFormItem[]
 }

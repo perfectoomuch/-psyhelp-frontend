@@ -2,12 +2,12 @@ import { defineStore } from 'pinia'
 import type {
 	SpecialistItemType,
 	SpecialistStoreType,
-} from '@/app/specialists/types/specialist'
+} from '../types/specialist'
 
-export const useFilterSpecialistsStore = defineStore('filterSpecialists', {
+export const useSpecialistsStore = defineStore('specialists', {
 	state: () => ({ specialists: [], loading: true } as SpecialistStoreType),
 	actions: {
-		updateSpecialists(data: SpecialistItemType[]) {
+		setSpecialists(data: SpecialistItemType[]) {
 			this.specialists = data
 			this.loading = false
 		},

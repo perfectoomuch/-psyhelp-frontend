@@ -4,6 +4,10 @@
 		description="Ответьте на следующие вопросы и мы подберем Вам психолога"
 	/>
 
+	<div class="flex justify-center" v-if="questionsStore.loading">
+		<span class="loading loading-spinner text-primary"></span>
+	</div>
+
 	<template v-if="filterFormShow">
 		<div
 			v-if="tab === 'result'"
@@ -64,6 +68,12 @@
 				Подобрать психолога
 			</button>
 		</div>
+		<template v-if="tab === 'result'">
+			<SpecialistsLoop
+				:specialists="specialistsStore.specialists"
+				:loading="specialistsStore.loading"
+			/>
+		</template>
 	</template>
 </template>
 
@@ -71,13 +81,17 @@
 import { defineComponent } from 'vue'
 import { ListFilter, ChevronDown } from 'lucide-vue-next'
 
-import { Header } from '@/components/Header'
+import { Header } from '../../../components/Header'
 import { QuestionsService } from '../services/questions.service'
-import { SpecialistsService } from '../services/specialists.service'
+import { BidService } from '../../specialists/services/bid.service'
+
+import { FilterSpecialistsService } from '../services/specialists.service'
 import { useQuestionsStore } from '../store/questions.store'
+import { useUserStore } from '../../../stores/user.store'
 import { QuestionFormItem, QuestionInterface } from '../types/question'
 import { animate } from 'animejs'
-import { useSpecialistsStore } from '../store/specialists.store'
+import { useFilterSpecialistsStore } from '../store/specialists.store'
+import SpecialistsLoop from '../../specialists/components/SpecialistsLoop.vue'
 
 export default defineComponent({
 	name: 'HomePage',
@@ -85,12 +99,15 @@ export default defineComponent({
 		Header,
 		ListFilter,
 		ChevronDown,
+		SpecialistsLoop,
 	},
 	data: () => ({
 		filterForm: [] as QuestionFormItem[],
+		filterFormPayload: [] as QuestionFormItem[],
 		filterFormShow: false as boolean,
 		questionsService: new QuestionsService(),
-		specialistsService: new SpecialistsService(),
+		specialistsService: new FilterSpecialistsService(),
+		bidService: new BidService(),
 		tab: 'form',
 		filterFormToggle: false,
 	}),
@@ -107,13 +124,91 @@ export default defineComponent({
 			})
 		)
 		this.filterFormShow = true
+
+		this.filterForm = [
+			{
+				local_id: 1000,
+				question: 'Что вы чувствуете?',
+				answer: ['Тревога, стресс'],
+				field: '',
+			},
+			{
+				local_id: 1001,
+				question: 'Какие у вас проблемы?',
+				answer: ['Прокрастинация, перфекционизм'],
+				field: '',
+			},
+			{
+				local_id: 1002,
+				question: 'Что с вами произошло?',
+				answer: 'Семейные или партнерские конфликты',
+				field: '',
+			},
+			{
+				local_id: 1003,
+				question: 'Предпочтения по полу специалиста',
+				answer: 'Неважно',
+				field: 'gender',
+			},
+			{
+				local_id: 1004,
+				question: 'Возраст психолога',
+				answer: 'Неважно',
+				field: 'age',
+			},
+			{
+				local_id: 1005,
+				question: 'Опыт работы',
+				answer: 'Неважно',
+				field: 'experience_years',
+			},
+			{
+				local_id: 1006,
+				question: 'Когда нужна консультация?',
+				answer: 'Неважно',
+				field: '',
+			},
+			{
+				local_id: 1007,
+				question: 'Бюджет на сессию',
+				answer: 'От 5000 до 10000 ₽',
+				field: 'price',
+			},
+			{
+				local_id: 1008,
+				question: 'Опыт работы с этническими группами',
+				answer: 'Неважно',
+				field: 'experience_ethnic_group',
+			},
+			{
+				local_id: 1009,
+				question: 'Религиозная направленность',
+				answer: 'Неважно',
+				field: 'religion',
+			},
+			{
+				local_id: 1010,
+				question: 'Для кого',
+				answer: 'Для себя',
+				field: 'experience_route',
+			},
+			{
+				local_id: 1011,
+				question: 'Методы терапии',
+				answer: ['Арт-терапия'],
+				field: 'method',
+			},
+		]
 	},
 	computed: {
 		questionsStore() {
 			return useQuestionsStore()
 		},
 		specialistsStore() {
-			return useSpecialistsStore()
+			return useFilterSpecialistsStore()
+		},
+		userStore() {
+			return useUserStore()
 		},
 		tabResultClass() {
 			if (this.tab === 'result') {
@@ -153,9 +248,22 @@ export default defineComponent({
 					}
 					return el
 				})
+				this.filterFormPayload = payload
+
 				await this.specialistsService.fetchSpecialistsByFilter(payload)
 				this.tab = 'result'
+				window.scrollTo({ top: 0, behavior: 'auto' })
 			}
+		},
+		async onBooking(data: any) {
+			const payload = {
+				...data,
+				form: this.filterFormPayload,
+				chat_id: this.userStore.user.chat_id,
+			}
+
+			const result = await this.bidService.createBid(payload)
+			return result
 		},
 	},
 })

@@ -1,9 +1,9 @@
-import { useSpecialistsStore } from '../store/specialists.store'
+import { useFilterSpecialistsStore } from '../store/specialists.store'
 import { http } from '@/plugins/axios'
 import type { QuestionFormItem } from '../types/question'
 
-export class SpecialistsService {
-	private store = useSpecialistsStore()
+export class FilterSpecialistsService {
+	private store = useFilterSpecialistsStore()
 
 	async fetchSpecialistsByFilter(data: QuestionFormItem) {
 		try {

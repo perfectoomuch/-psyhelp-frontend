@@ -54,3 +54,7 @@ html,
 body {
 	overflow-x: hidden;
 }
+
+.dock > button::after {
+	display: none;
+}

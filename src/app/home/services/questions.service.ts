@@ -7,7 +7,7 @@ export class QuestionsService {
 	async fetchQuestions() {
 		try {
 			const response = await http.get('bids/questions')
-			this.store.updateQuestions(response.data)
+			this.store.setQuestions(response.data)
 		} catch (err) {
 			console.log(err)
 		}

@@ -1,5 +1,5 @@
 <template>
-	<Notivue v-slot="item" class="-translate-y-10">
+	<Notivue v-slot="item" class="-translate-y-10 z-[9999999]">
 		<Notification :item="item" :theme="theme">
 			<NotificationProgress :item="item" />
 		</Notification>
