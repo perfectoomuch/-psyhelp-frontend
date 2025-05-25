@@ -40,8 +40,11 @@
 body {
 	font-family: 'Commissioner', sans-serif;
 	@apply bg-gray-100/50;
-	min-height: 100vh;
+}
+
+body #routerClient {
 	padding-bottom: 64px;
+	min-height: 100vh;
 }
 
 *,

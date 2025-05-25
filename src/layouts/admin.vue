@@ -1,5 +1,5 @@
 <template>
-	<div id="router" class="p-3 px-4">
+	<div id="routerAdmin">
 		<RouterView></RouterView>
 	</div>
 </template>

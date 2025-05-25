@@ -12,6 +12,7 @@ import VueVideoPlayer from '@videojs-player/vue'
 import file from './utils/file'
 import currency from './utils/currency'
 import dayjs from 'dayjs'
+import { Icon } from './components/Icon'
 
 const notivue = createNotivue({
 	position: 'bottom-right',
@@ -24,6 +25,7 @@ app.config.globalProperties.$file = file
 app.config.globalProperties.$currency = currency
 app.config.globalProperties.$dayjs = dayjs
 
+app.component('Icon', Icon)
 app.use(VueVideoPlayer)
 app.use(notivue)
 app.use(pinia)

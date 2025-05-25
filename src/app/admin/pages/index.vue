@@ -1,3 +1,3 @@
 <template>
-	<h1>admin page</h1>
+	<router-view></router-view>
 </template>
