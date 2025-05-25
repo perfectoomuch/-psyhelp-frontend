@@ -1,7 +1,7 @@
 export default {
 	routes: [
 		{
-			path: '/',
+			path: '/specialists',
 			component: () => import('./pages/index.vue'),
 			name: 'specialists',
 		},

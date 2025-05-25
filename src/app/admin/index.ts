@@ -1,9 +1,9 @@
 export default {
 	routes: [
 		{
-			path: '/help',
+			path: '/admin',
 			component: () => import('./pages/index.vue'),
-			name: 'help',
+			name: 'admin',
 		},
 	],
 }

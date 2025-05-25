@@ -3,6 +3,7 @@
 		<figure class="relative">
 			<img class="w-full h-[200px] object-cover" :src="$file('avatar.jpg')" />
 			<button
+				v-if="item.video"
 				class="btn btn-circle btn-sm absolute top-2 right-2 border border-black/10"
 				@click="$emit('video', item.video)"
 			>
