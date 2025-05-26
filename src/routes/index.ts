@@ -29,7 +29,9 @@ router.beforeEach(async (to, from, next) => {
 	if (!authed) {
 		authed = await authService.GetUser()
 	}
-
+	// if (to.path.includes('admin')) {
+	// 	require('../styles/shadcn.css')
+	// }
 	if (to.name === 'admin') next('/admin/auth')
 	if (!authed && to?.meta?.requireAuth) next('/admin/auth')
 	if (authed && to?.meta?.authPage) next('/admin/dashboard')

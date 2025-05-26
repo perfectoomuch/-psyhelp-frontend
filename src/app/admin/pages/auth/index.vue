@@ -11,6 +11,7 @@
 							placeholder="mail@site.com"
 							required
 							v-model="form.email"
+							class="border"
 						/>
 					</label>
 					<label class="input w-full">
@@ -20,6 +21,7 @@
 							placeholder="********"
 							required
 							v-model="form.password"
+							class="border"
 						/>
 						<Icon
 							:name="!passwordShow ? 'Eye' : 'EyeOff'"

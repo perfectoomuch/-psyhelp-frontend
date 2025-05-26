@@ -117,7 +117,7 @@
 	</div>
 </template>
 
-<script lang="ts">
+<script>
 import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import 'swiper/css'
@@ -170,10 +170,10 @@ export default {
 	// 	},
 	// },
 	methods: {
-		onSwiper(swiper: any) {
+		onSwiper(swiper) {
 			this.swiperInstance = swiper
 		},
-		onSlideChange(event: any) {
+		onSlideChange(event) {
 			this.activeIndex = event.activeIndex
 		},
 		closeIntro() {
@@ -185,6 +185,9 @@ export default {
 		async onSubmit() {
 			this.formLoading = true
 			const result = await this.userStore.updateUser(this.form)
+			if (result) {
+				window.open('/', '_self')
+			}
 		},
 	},
 }

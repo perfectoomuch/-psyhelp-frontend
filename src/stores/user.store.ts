@@ -33,6 +33,8 @@ export const useUserStore = defineStore('user', {
 			return true
 		},
 		async getUser(data: SetUserType) {
+			console.log('getUser', data)
+
 			try {
 				const response = await http.get(`customers/${data.chat_id}`)
 				this.user = await {
@@ -41,6 +43,8 @@ export const useUserStore = defineStore('user', {
 				}
 				this.loading = false
 			} catch (err: any) {
+				console.log('getUser catch', err)
+
 				if (err.response.status === 404) {
 					await this.setUser(data)
 				} else {
@@ -49,19 +53,23 @@ export const useUserStore = defineStore('user', {
 			}
 		},
 		async setUser(data: SetUserType) {
+			console.log('setUser', data)
+
 			await http.post('customers', data)
-			this.getUser(data)
+			await this.getUser(data)
 		},
 		async updateUser(data: UpdateUserType): Promise<boolean> {
+			console.log('updateUser', data)
+
 			try {
 				const response = await http.post(
 					`customers/update/${this.user.chat_id}`,
 					data
 				)
-				await this.getUser()
+				await this.getUser(data)
 				return true
 			} catch (err) {
-				console.log(err)
+				console.log('updateUser catch', err)
 
 				push.error('Непредвиденная ошибка')
 				return false

@@ -23,6 +23,7 @@
 				]"
 				v-for="(item, index) in items"
 				:key="index"
+				@click="$router.push(item.route)"
 			>
 				<Icon :name="item.icon" :size="18" />
 				{{ item.name }}
@@ -52,10 +53,10 @@ export default {
 				value: 'adminHome',
 			},
 			{
-				name: 'Клиенты',
+				name: 'Пользователи',
 				route: '/admin/dashboard/customers',
 				icon: 'UsersRound',
-				value: '',
+				value: 'adminCustomers',
 			},
 			{
 				name: 'Специалисты',

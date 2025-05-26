@@ -20,10 +20,8 @@
 			</p>
 			<div class="w-full flex flex-wrap gap-1">
 				<div class="badge badge-sm">{{ item.education }}</div>
-				<div class="badge badge-sm">{{ getProfession }}</div>
-				<div class="badge badge-accent badge-sm">
-					Направлении: {{ getRouteText }}
-				</div>
+				<div class="badge badge-sm">{{ profession }}</div>
+				<div class="badge badge-accent badge-sm">Направлении: {{ route }}</div>
 				<div class="badge badge-accent badge-sm">
 					Сессии было: {{ item.sessions }}
 				</div>
@@ -44,6 +42,7 @@
 
 <script>
 import { Play, Video } from 'lucide-vue-next'
+import { getProfession, getRoute } from '@/utils/specialist.ts'
 export default {
 	props: ['item'],
 	components: {
@@ -51,37 +50,14 @@ export default {
 		Video,
 	},
 	computed: {
-		getProfession() {
-			switch (this.item.profession) {
-				case 'psychologist':
-					return 'Психолог'
-				case 'psychotherapist':
-					return 'Психотерапевт'
-				case 'coach':
-					return 'Коуч'
-				default:
-					break
-			}
+		profession() {
+			return getProfession(this.item.profession)
 		},
-		getRouteText() {
-			return this.item.experience_route.map(el => this.getRoute(el)).join(', ')
+		route() {
+			return getRoute(this.item.experience_route)
 		},
 	},
 	methods: {
-		getRoute(val) {
-			switch (val) {
-				case 'adult':
-					return 'взрослые'
-				case 'child':
-					return 'дети'
-				case 'couple':
-					return 'пары'
-				case 'supervision':
-					return 'супервизия'
-				default:
-					break
-			}
-		},
 		openBooking() {
 			this.$emit('request', {
 				specialist_id: this.item.id,

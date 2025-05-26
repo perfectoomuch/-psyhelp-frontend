@@ -24,6 +24,11 @@ export default {
 							component: () => import('./pages/dashboard/home.vue'),
 							name: 'adminHome',
 						},
+						{
+							path: '/admin/dashboard/customers',
+							component: () => import('./pages/dashboard/users.vue'),
+							name: 'adminCustomers',
+						},
 					],
 				},
 			],
