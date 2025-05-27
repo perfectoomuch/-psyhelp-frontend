@@ -4,24 +4,24 @@
 			<div class="card-body">
 				<h2 class="card-title">Войти</h2>
 				<form @submit.prevent="onSubmit" class="flex flex-col gap-4">
-					<label class="input w-full">
+					<label class="input w-full border border-foreground">
 						<Mail class="size-4 opacity-65" />
 						<input
 							type="email"
 							placeholder="mail@site.com"
 							required
 							v-model="form.email"
-							class="border"
+							class=""
 						/>
 					</label>
-					<label class="input w-full">
+					<label class="input w-full border border-foreground">
 						<LockKeyhole class="size-4 opacity-65" />
 						<input
 							:type="!passwordShow ? 'password' : 'text'"
 							placeholder="********"
 							required
 							v-model="form.password"
-							class="border"
+							class=""
 						/>
 						<Icon
 							:name="!passwordShow ? 'Eye' : 'EyeOff'"

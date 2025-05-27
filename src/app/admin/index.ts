@@ -29,6 +29,11 @@ export default {
 							component: () => import('./pages/dashboard/users.vue'),
 							name: 'adminCustomers',
 						},
+						{
+							path: '/admin/dashboard/specialists',
+							component: () => import('./pages/dashboard/specialists.vue'),
+							name: 'adminSpecialists',
+						},
 					],
 				},
 			],
