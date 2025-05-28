@@ -5,7 +5,7 @@ import type { QuestionFormItem } from '../types/question'
 export class FilterSpecialistsService {
 	private store = useFilterSpecialistsStore()
 
-	async fetchSpecialistsByFilter(data: QuestionFormItem) {
+	async fetchSpecialistsByFilter(data: QuestionFormItem[]) {
 		try {
 			const response = await http.post('specialists/filter-by-bid', data)
 			this.store.updateSpecialists(response.data)

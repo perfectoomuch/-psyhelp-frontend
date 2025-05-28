@@ -29,7 +29,7 @@
 				@mounted="onPlayerReady"
 			/>
 			<button
-				class="btn btn-circle btn-sm absolute top-2 right-2 border border-black/10"
+				class="btn btn-circle btn-sm absolute top-2 right-2 border border-black/10 z-[9999]"
 				@click="onCloseVideo"
 			>
 				<X class="size-4 text-primary" />

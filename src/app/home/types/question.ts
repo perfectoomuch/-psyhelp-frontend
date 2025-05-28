@@ -8,6 +8,7 @@ export type QuestionInterface = {
 
 export type QuestionsStoreInterface = {
 	questions: QuestionInterface[]
+	filters: QuestionInterface[]
 	formQuestions: FormQuestionInterface[]
 	loading: boolean
 }

@@ -4,23 +4,44 @@
 		description="Ответьте на следующие вопросы и мы подберем Вам психолога"
 	/>
 
-	<div class="flex justify-center" v-if="questionsStore.loading">
-		<span class="loading loading-spinner text-primary"></span>
-	</div>
-
 	<template v-if="filterFormShow">
-		<div
-			v-if="tab === 'result'"
-			class="h-[48px] card w-full bg-base-100 rounded-lg flex items-center flex-row px-4 mb-4 font-semibold shadow-sm"
-			@click="filterFormToggle = !filterFormToggle"
-		>
-			<ListFilter class="size-4 mr-2" />
-			<span>Параметры фильтра</span>
-			<ChevronDown
-				class="size-4 ml-auto duration-300"
-				:class="filterFormToggle && 'rotate-180'"
-			/>
+		<div v-if="tab === 'result'" class="flex flex-col gap-2 mb-4">
+			<div
+				class="h-[48px] card w-full bg-base-100 rounded-lg flex items-center flex-row px-4 font-semibold shadow-sm"
+				@click="filterFormToggle = !filterFormToggle"
+			>
+				<ListFilter class="size-4 mr-2" />
+				<span>Параметры фильтра</span>
+				<ChevronDown
+					class="size-4 ml-auto duration-300"
+					:class="filterFormToggle && 'rotate-180'"
+				/>
+			</div>
+
+			<div class="grid grid-cols-2 gap-2">
+				<Select
+					v-for="(item, index) in questionsStore.filters"
+					:key="index"
+					v-model="afterFilterForm[index].answer"
+					@update:modelValue="onChangeFilter"
+				>
+					<SelectTrigger class="bg-white border-none shadow-md w-full">
+						<SelectValue :placeholder="item.question" />
+					</SelectTrigger>
+					<SelectContent class="bg-white border-gray-200 max-h-[400px]">
+						<SelectLabel>{{ item.question }}</SelectLabel>
+						<SelectItem
+							v-for="(variant, j) in item.variants"
+							:key="j"
+							:value="variant"
+						>
+							{{ variant }}
+						</SelectItem>
+					</SelectContent>
+				</Select>
+			</div>
 		</div>
+
 		<div class="flex-col gap-2" :class="tabResultClass">
 			<template v-for="(item, index) in questionsStore.questions" :key="index">
 				<div
@@ -39,7 +60,7 @@
 										<input
 											type="checkbox"
 											:id="`checkbox-${index}-${j}`"
-											v-model="filterForm[index].answer"
+											v-model="preFilterForm[index].answer"
 											:value="variant"
 											class="checkbox checkbox-xs checkbox-primary"
 										/>
@@ -48,7 +69,7 @@
 										<input
 											type="radio"
 											:id="`checkbox-${index}-${j}`"
-											v-model="filterForm[index].answer"
+											v-model="preFilterForm[index].answer"
 											:value="variant"
 											class="radio radio-xs radio-primary"
 										/>
@@ -77,21 +98,27 @@
 	</template>
 </template>
 
-<script lang="ts">
+<script>
 import { defineComponent } from 'vue'
 import { ListFilter, ChevronDown } from 'lucide-vue-next'
 
 import { Header } from '../../../components/Header'
-import { QuestionsService } from '../services/questions.service'
 import { BidService } from '../../specialists/services/bid.service'
 
 import { FilterSpecialistsService } from '../services/specialists.service'
 import { useQuestionsStore } from '../store/questions.store'
 import { useUserStore } from '../../../stores/user.store'
-import { QuestionFormItem, QuestionInterface } from '../types/question'
-import { animate } from 'animejs'
 import { useFilterSpecialistsStore } from '../store/specialists.store'
 import SpecialistsLoop from '../../specialists/components/SpecialistsLoop.vue'
+import {
+	Select,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectLabel,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select'
 
 export default defineComponent({
 	name: 'HomePage',
@@ -100,22 +127,28 @@ export default defineComponent({
 		ListFilter,
 		ChevronDown,
 		SpecialistsLoop,
+		Select,
+		SelectContent,
+		SelectGroup,
+		SelectItem,
+		SelectLabel,
+		SelectTrigger,
+		SelectValue,
 	},
 	data: () => ({
-		filterForm: [] as QuestionFormItem[],
-		filterFormPayload: [] as QuestionFormItem[],
-		filterFormShow: false as boolean,
-		questionsService: new QuestionsService(),
+		preFilterForm: [],
+		afterFilterForm: [],
+		preFilterFormPayload: [],
+		filterFormShow: false,
 		specialistsService: new FilterSpecialistsService(),
 		bidService: new BidService(),
 		tab: 'form',
 		filterFormToggle: false,
 	}),
 	async created() {
-		await this.questionsService.fetchQuestions()
 		await Promise.all(
-			this.questionsStore.questions.map((el: QuestionInterface) => {
-				this.filterForm.push({
+			this.questionsStore.questions.map(el => {
+				this.preFilterForm.push({
 					local_id: el.id,
 					question: el.question,
 					answer: [],
@@ -123,9 +156,19 @@ export default defineComponent({
 				})
 			})
 		)
+		await Promise.all(
+			this.questionsStore.filters.map(el => {
+				this.afterFilterForm.push({
+					local_id: el.id,
+					question: el.question,
+					answer: '',
+					field: el.field,
+				})
+			})
+		)
 		this.filterFormShow = true
 
-		this.filterForm = [
+		this.preFilterForm = [
 			{
 				local_id: 1000,
 				question: 'Что вы чувствуете?',
@@ -163,12 +206,6 @@ export default defineComponent({
 				field: 'experience_years',
 			},
 			{
-				local_id: 1006,
-				question: 'Когда нужна консультация?',
-				answer: 'Неважно',
-				field: '',
-			},
-			{
 				local_id: 1007,
 				question: 'Бюджет на сессию',
 				answer: 'От 5000 до 10000 ₽',
@@ -179,24 +216,6 @@ export default defineComponent({
 				question: 'Опыт работы с этническими группами',
 				answer: 'Неважно',
 				field: 'experience_ethnic_group',
-			},
-			{
-				local_id: 1009,
-				question: 'Религиозная направленность',
-				answer: 'Неважно',
-				field: 'religion',
-			},
-			{
-				local_id: 1010,
-				question: 'Для кого',
-				answer: 'Для себя',
-				field: 'experience_route',
-			},
-			{
-				local_id: 1011,
-				question: 'Методы терапии',
-				answer: ['Арт-терапия'],
-				field: 'method',
 			},
 		]
 	},
@@ -221,11 +240,11 @@ export default defineComponent({
 	},
 	methods: {
 		async onFilter() {
-			const emptyFieldIndex = this.filterForm.findIndex(
-				(el: QuestionFormItem) => el.answer.length === 0
+			const emptyFieldIndex = this.preFilterForm.findIndex(
+				el => el.answer.length === 0
 			)
 
-			const emptyField = this.filterForm[emptyFieldIndex]
+			const emptyField = this.preFilterForm[emptyFieldIndex]
 
 			if (emptyFieldIndex > -1) {
 				if (emptyField.select === 'multiple') {
@@ -238,7 +257,7 @@ export default defineComponent({
 					behavior: 'smooth',
 				})
 			} else {
-				const payload = this.filterForm.map((el: QuestionFormItem) => {
+				const payload = this.preFilterForm.map(el => {
 					if (Array.isArray(el.answer)) return el
 					if (typeof el.answer === 'string') {
 						return {
@@ -253,9 +272,21 @@ export default defineComponent({
 				await this.specialistsService.fetchSpecialistsByFilter(payload)
 				this.tab = 'result'
 				window.scrollTo({ top: 0, behavior: 'auto' })
+
+				this.afterFilterForm.map(el => {
+					const parent = this.preFilterForm.find(
+						subEl => subEl.local_id === el.local_id
+					)
+					if (parent) {
+						const index = this.afterFilterForm.findIndex(
+							subEl => subEl.local_id === el.local_id
+						)
+						this.afterFilterForm[index].answer = parent.answer
+					}
+				})
 			}
 		},
-		async onBooking(data: any) {
+		async onBooking(data) {
 			const payload = {
 				...data,
 				form: this.filterFormPayload,
@@ -264,6 +295,42 @@ export default defineComponent({
 
 			const result = await this.bidService.createBid(payload)
 			return result
+		},
+		async onChangeFilter() {
+			const payloadPreFilter = this.preFilterForm.map(el => {
+				if (Array.isArray(el.answer)) return el
+				if (typeof el.answer === 'string') {
+					return {
+						...el,
+						answer: [el.answer],
+					}
+				}
+				return el
+			})
+			const preFilterDeleteDuplicates = payloadPreFilter.filter(
+				el =>
+					!this.afterFilterForm.some(subEl => subEl.local_id === el.local_id)
+			)
+
+			const mergeFilter = [
+				...preFilterDeleteDuplicates,
+				...this.afterFilterForm,
+			]
+
+			const payload = mergeFilter.map(el => {
+				if (Array.isArray(el.answer)) return el
+				if (typeof el.answer === 'string') {
+					return {
+						...el,
+						answer: el.answer.length > 0 ? [el.answer] : [''],
+					}
+				}
+				return el
+			})
+
+			await this.specialistsService.fetchSpecialistsByFilter(payload)
+			this.tab = 'result'
+			window.scrollTo({ top: 0, behavior: 'auto' })
 		},
 	},
 })

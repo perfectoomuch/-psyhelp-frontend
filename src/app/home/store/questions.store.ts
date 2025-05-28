@@ -8,13 +8,21 @@ export const useQuestionsStore = defineStore('questions', {
 	state: () =>
 		({
 			questions: [],
+			filters: [],
 			formQuestions: [],
 			loading: true,
 		} as QuestionsStoreInterface),
 	actions: {
+		setFormData(questions: QuestionInterface[], filters: QuestionInterface[]) {
+			this.setQuestions(questions)
+			this.setFilters(filters)
+			this.loading = false
+		},
 		setQuestions(data: QuestionInterface[]) {
 			this.questions = data
-			this.loading = false
+		},
+		setFilters(data: QuestionInterface[]) {
+			this.filters = data
 		},
 	},
 })

@@ -6,8 +6,9 @@ export class QuestionsService {
 
 	async fetchQuestions() {
 		try {
-			const response = await http.get('bids/questions')
-			this.store.setQuestions(response.data)
+			const questions = await http.get('bids/questions')
+			const filters = await http.get('bids/filters')
+			this.store.setFormData(questions.data, filters.data)
 		} catch (err) {
 			console.log(err)
 		}

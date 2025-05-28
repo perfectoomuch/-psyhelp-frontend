@@ -45,7 +45,6 @@ body {
 }
 
 body #routerClient {
-	padding-bottom: 64px;
 	min-height: 100vh;
 }
 
@@ -62,4 +61,8 @@ body {
 
 .dock > button::after {
 	display: none;
+}
+
+[data-reka-popper-content-wrapper] *:focus {
+	@apply bg-gray-100;
 }
