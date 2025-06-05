@@ -22,15 +22,7 @@ type UpdateUserType = {
 export const useUserStore = defineStore('user', {
 	state: () =>
 		({
-			user: {
-				chat_id: 652674468,
-				email: 'mail@mail.com',
-				filled: true,
-				first_name: 'test',
-				id: '683372c926daf44a92b1f6b4',
-				last_name: 'test',
-				username: 'exetmo',
-			},
+			user: null,
 			loading: false,
 		} as any),
 	actions: {
@@ -41,21 +33,21 @@ export const useUserStore = defineStore('user', {
 			return true
 		},
 		async getUser(data: SetUserType) {
-			// try {
-			// 	const response = await http.get(`customers/${data.chat_id}`)
-			// 	this.user = await {
-			// 		...response.data,
-			// 		filled: this.isFilled(response.data),
-			// 	}
-			// 	this.loading = false
-			// } catch (err: any) {
-			// 	console.log('getUser catch', err)
-			// 	if (err.response.status === 404) {
-			// 		await this.setUser(data)
-			// 	} else {
-			// 		push.error('Непредвиденная ошибка')
-			// 	}
-			// }
+			try {
+				const response = await http.get(`customers/${data.chat_id}`)
+				this.user = await {
+					...response.data,
+					filled: this.isFilled(response.data),
+				}
+				this.loading = false
+			} catch (err: any) {
+				console.log('getUser catch', err)
+				if (err.response.status === 404) {
+					await this.setUser(data)
+				} else {
+					push.error('Непредвиденная ошибка')
+				}
+			}
 		},
 		async setUser(data: SetUserType) {
 			await http.post('customers', data)
