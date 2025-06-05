@@ -17,7 +17,7 @@
 			<button
 				:class="[
 					menuItemClass,
-					$route.name === item.value
+					$route.name.includes(item.value)
 						? 'bg-primary text-white'
 						: 'hover:bg-gray-100',
 				]"
@@ -62,19 +62,19 @@ export default {
 				name: 'Специалисты',
 				route: '/admin/dashboard/specialists',
 				icon: 'Star',
-				value: '',
+				value: 'adminSpecialists',
 			},
 			{
 				name: 'Чаты',
 				route: '/admin/dashboard/chats',
 				icon: 'MessageSquareText',
-				value: '',
+				value: 'adminChats',
 			},
 			{
 				name: 'Транзакции',
 				route: '/admin/dashboard/transactions',
 				icon: 'Landmark',
-				value: '',
+				value: 'adminTransactions',
 			},
 		],
 	}),

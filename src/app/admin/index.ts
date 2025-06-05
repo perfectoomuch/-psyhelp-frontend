@@ -34,6 +34,18 @@ export default {
 							component: () => import('./pages/dashboard/specialists.vue'),
 							name: 'adminSpecialists',
 						},
+						{
+							path: '/admin/dashboard/specialists/add',
+							component: () =>
+								import('./pages/dashboard/create_specialist.vue'),
+							name: 'adminSpecialistsAdd',
+						},
+						{
+							path: '/admin/dashboard/specialists/:id',
+							component: () =>
+								import('./pages/dashboard/single_specialist.vue'),
+							name: 'adminSpecialistsSingle',
+						},
 					],
 				},
 			],

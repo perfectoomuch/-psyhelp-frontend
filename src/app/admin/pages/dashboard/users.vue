@@ -109,8 +109,6 @@ export default {
 			this.search.result = await this.customerService.getBySearch(
 				this.search.text
 			)
-			console.log(this.search.result)
-
 			this.search.used = true
 		},
 	},

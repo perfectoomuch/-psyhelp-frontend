@@ -168,8 +168,8 @@
 							</DropdownMenu>
 						</td>
 						<td>
-							<button class="btn btn-sm" @click="openBid(item.id)">
-								Открыть заявку
+							<button class="btn btn-sm w-full" @click="openBid(item.id)">
+								Открыть
 							</button>
 						</td>
 					</tr>
@@ -242,6 +242,21 @@
 						</div>
 
 						<button class="btn btn-accent">Выставить счет на оплату</button>
+					</fieldset>
+					<fieldset
+						class="fieldset bg-base-200 border-base-300 rounded-box border p-4"
+						v-if="currentBid.body.length > 0"
+					>
+						<legend class="fieldset-legend">Опрос</legend>
+
+						<template v-for="(item, index) in currentBid.body" :key="index">
+							<label class="label">{{ item.question }}</label>
+							<input
+								class="input border"
+								:value="item.answer.join(', ')"
+								readonly
+							/>
+						</template>
 					</fieldset>
 					<fieldset
 						class="fieldset bg-base-200 border-base-300 rounded-box border p-4"

@@ -1,7 +1,7 @@
 <template>
 	<div class="card card-sm bg-base-100 shadow-sm">
 		<figure class="relative">
-			<img class="w-full h-[200px] object-cover" :src="$file('avatar.jpg')" />
+			<img class="w-full h-[200px] object-cover" :src="$file(item.photo)" />
 			<button
 				v-if="item.video"
 				class="btn btn-circle btn-sm absolute top-2 right-2 border border-black/10"
