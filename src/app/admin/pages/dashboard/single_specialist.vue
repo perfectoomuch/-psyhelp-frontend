@@ -1,10 +1,17 @@
 <template>
-	<div class="flex justify-between">
+	<div class="flex gap-2">
 		<div class="flex flex-col mb-10">
 			<h1 class="text-2xl font-semibold">Специалисты</h1>
 			<span v-if="item" class="text-sm opacity-65"> ID: {{ item.id }} </span>
 		</div>
-		<button class="btn" @click="onSave" :disabled="saveLoading">
+		<button
+			type="button"
+			class="btn btn-square ml-auto"
+			@click="$router.push('/admin/dashboard/specialists/add')"
+		>
+			<Icon name="Plus" :size="14" />
+		</button>
+		<button class="btn btn-primary" @click="onSave" :disabled="saveLoading">
 			<span
 				class="loading loading-spinner text-primary"
 				v-show="saveLoading"
@@ -19,22 +26,36 @@
 	</div>
 
 	<div v-if="!loading && item !== null" class="grid grid-cols-2 gap-4">
-		<div class="grid grid-cols-2 gap-4">
-			<img
-				class="w-full h-full object-cover"
-				:src="$file(item.photo)"
-				v-if="item.photo"
-			/>
+		<div class="flex flex-col gap-4">
+			<div class="grid grid-cols-2 gap-4">
+				<img
+					class="w-full h-[250px] object-cover"
+					:src="$file(item.photo)"
+					v-if="item.photo"
+				/>
+				<div
+					v-else
+					class="w-full h-[250px] flex flex-col items-center justify-center bg-gray-100 rounded-lg"
+				>
+					<Icon name="Image" :size="20" class="opacity-65" />
+				</div>
 
-			<video-player
-				v-if="item.video"
-				:src="$file(item.video)"
-				:loop="false"
-				:volume="1"
-				:controls="true"
-				aspectRatio="16:9"
-				class="min-h-full"
-			/>
+				<video-player
+					v-if="item.video"
+					:src="$file(item.video)"
+					:loop="false"
+					:volume="1"
+					:controls="true"
+					aspectRatio="16:9"
+					class="min-h-[250px]"
+				/>
+				<div
+					v-else
+					class="w-full h-[250px] flex flex-col items-center justify-center bg-gray-100 rounded-lg"
+				>
+					<Icon name="Video" :size="20" class="opacity-65" />
+				</div>
+			</div>
 
 			<div class="col-span-2 flex flex-col gap-4">
 				<fieldset
@@ -96,6 +117,24 @@
 			>
 				<legend class="fieldset-legend">Проф. профиль</legend>
 
+				<label class="label">Стоимость сессии</label>
+				<input
+					class="input border"
+					v-model="item.price"
+					v-maska="'###########'"
+					required
+				/>
+
+				<label class="label">Опыт работы в годах</label>
+				<input
+					class="input border"
+					v-model="item.experience_years"
+					v-maska
+					data-maska="0.99"
+					data-maska-tokens="0:\d:multiple|9:\d:optional"
+					required
+				/>
+
 				<label class="label">Направлении</label>
 				<div class="flex gap-2">
 					<input class="input border" :value="routeSelected" readonly />
@@ -138,6 +177,12 @@
 					</SelectContent>
 				</Select>
 
+				<label class="label">Образование</label>
+				<input class="input border" v-model="item.education" required />
+
+				<label class="label">Сессии было</label>
+				<input class="input border" v-model="item.sessions" required />
+
 				<label class="label">Религия</label>
 				<Select v-model="item.religion">
 					<SelectTrigger class="bg-white border-none shadow-none w-full">
@@ -170,8 +215,15 @@
 					</SelectContent>
 				</Select>
 
+				<label class="label">Сообщение визитка</label>
+				<textarea
+					class="textarea w-full"
+					v-model="item.message"
+					placeholder="Bio"
+				></textarea>
+
 				<label class="label">Методы лечения</label>
-				<div class="flex gap-2">
+				<div class="flex justify-between gap-2">
 					<div class="flex flex-col">
 						<span
 							v-for="(value, index) in methodsSelected"
@@ -183,7 +235,7 @@
 					</div>
 					<DropdownMenu>
 						<DropdownMenuTrigger
-							class="btn btn-sm h-[40px] btn-secondary self-start"
+							class="btn btn-sm h-[40px] btn-secondary self-start ml-auto"
 						>
 							Выбрать
 							<Icon name="ChevronDown" :size="14" />
@@ -238,6 +290,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import * as yup from 'yup'
 
 export default {
 	components: {
@@ -267,7 +320,7 @@ export default {
 		saveLoading: false,
 	}),
 	async created() {
-		await this.getItem()
+		await await this.getItem()
 	},
 	computed: {
 		genderList() {
@@ -326,7 +379,51 @@ export default {
 			const filename = await upload(file)
 			this.item[path] = filename
 		},
+		async modelCheck(data) {
+			const specialistSchema = yup.object({
+				first_name: yup.string().required('Имя обязателен'),
+				last_name: yup.string().required('Фамилия обязателен'),
+				email: yup.string().email().required('Фамилия обязателен'),
+				methods: yup
+					.array()
+					.of(yup.string().required())
+					.min(1, 'Укажите хотя бы один метод'),
+				experience_route: yup
+					.array()
+					.of(yup.string().required())
+					.min(1, 'Укажите хотя бы одно направление'),
+				experience_years: yup.string().required('Опыт работы обязателен'),
+				photo: yup.string().required('Загрузите фотографию'),
+				video: yup.string(),
+				gender: yup.string().required('Выберите пол специалиста'),
+				birth_year: yup.string().required('Год рождения обязателен'),
+				price: yup.string().required('Стоимость сессии обязателен'),
+				message: yup.string().required('Сообщение визитка обязателен'),
+				education: yup.string().required('Образование обязателен'),
+				profession: yup.string().required('Профессия обязателен'),
+				sessions: yup.string().required('Сессии обязателен'),
+				religion: yup.string().required('Религия обязателен'),
+				experience_ethnic_group: yup
+					.string()
+					.required('Опыт с эт. группами обязателен'),
+			})
+
+			try {
+				let response = await specialistSchema.validate(data, {
+					abortEarly: false,
+				})
+				return true
+			} catch (err) {
+				// const errItemText = err.errors[0]
+				// this.$toast.error(errItemText)
+				err.errors.map(el => this.$toast.error(el))
+				return false
+			}
+		},
 		async onSave() {
+			const valid = await this.modelCheck(this.item)
+			if (!valid) return
+
 			this.saveLoading = true
 			const id = this.item.id
 			const payload = this.item

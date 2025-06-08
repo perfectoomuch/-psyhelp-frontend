@@ -5,12 +5,13 @@ import axios from 'axios'
 import { push } from 'notivue'
 import Cookies from 'js-cookie'
 import router from '@/routes'
+import { init, socket } from './socket.service'
 
 export class AuthService {
 	private store = useAdminStore()
 
 	async GetUser(): Promise<boolean> {
-		const sessionToken = Cookies.get('session_token')
+		const sessionToken = Cookies.get('token')
 		if (!sessionToken) {
 			return false
 		}
@@ -18,6 +19,7 @@ export class AuthService {
 		try {
 			const response = await http.get('auth/me')
 			this.store.setUser(response.data)
+			await init()
 			return true
 		} catch (err) {
 			console.log(err)

@@ -48,16 +48,16 @@ export type SpecialistBodyType = {
 	email: string
 	methods: string[]
 	experience_route: ExperienceRouteEnum[]
-	experience_years: number
+	experience_years: string
 	photo: string
 	video?: string
 	gender: GenderEnum
-	birth_year: number
-	price: number
+	birth_year: string
+	price: string
 	message: string
 	education: string
 	profession: SpecialistProfessionEnum
 	religion: SpecialistReligionEnum
 	experience_ethnic_group: SpecialistEthnicEnum
-	sessions: number
+	sessions: string
 }

@@ -8,9 +8,11 @@
 				<span class="loading loading-spinner text-primary"></span>
 			</div>
 		</template>
-		<template v-else>
-			<DefaultLayout v-if="userStore.$state.user.filled" />
-			<Intro v-if="!userStore.$state.user.filled" />
+		<template
+			v-if="!userStore.$state.loading && userStore.$state.user !== null"
+		>
+			<DefaultLayout v-if="userStore.$state.user?.filled" />
+			<Intro v-if="!userStore.$state.user?.filled" />
 		</template>
 	</template>
 

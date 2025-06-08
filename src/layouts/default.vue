@@ -22,7 +22,6 @@
 import { Navigation } from '../components/Navigation'
 import { QuestionsService } from '../app/home/services/questions.service'
 import { useQuestionsStore } from '../app/home/store/questions.store'
-import { BidService } from '@/app/admin/services/bid.service'
 
 export default {
 	components: {
@@ -30,11 +29,9 @@ export default {
 	},
 	data: () => ({
 		questionsService: new QuestionsService(),
-		bidService: new BidService(),
 	}),
 	async created() {
 		await this.questionsService.fetchQuestions()
-		await this.bidService.getAll()
 	},
 	computed: {
 		questionsStore() {

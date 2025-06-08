@@ -6,13 +6,13 @@ const http = axios.create({
 	// baseURL: `https://${import.meta.env.VITE_APP_NGROK_SUBDOMAIN}/api/`,
 })
 
-const token = Cookies.get('session_token')
+const token = Cookies.get('token')
 if (token) {
-	http.defaults.headers.session_token = token
+	http.defaults.headers.token = token
 }
 
 const changeToken = async (newToken: string) => {
-	await Cookies.set('session_token', newToken, { expires: 1 })
+	await Cookies.set('token', newToken, { expires: 1 })
 	http.defaults.headers.token = await newToken
 }
 

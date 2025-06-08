@@ -6,7 +6,7 @@
 					<span>AD</span>
 				</div>
 			</div>
-			<div class="flex flex-col gap-1">
+			<div class="flex flex-col gap-1" v-if="!isMinimal">
 				<span class="text-sm font-medium leading-none">
 					{{ store.user.email }}
 				</span>
@@ -14,27 +14,30 @@
 			</div>
 		</div>
 		<div class="flex flex-col gap-1 p-2 flex-1">
-			<button
-				:class="[
-					menuItemClass,
-					$route.name.includes(item.value)
-						? 'bg-primary text-white'
-						: 'hover:bg-gray-100',
-				]"
-				v-for="(item, index) in items"
-				:key="index"
-				@click="$router.push(item.route)"
-			>
-				<Icon :name="item.icon" :size="18" />
-				{{ item.name }}
-			</button>
+			<template v-for="(item, index) in items" :key="index">
+				<button
+					:class="[
+						menuItemClass,
+						$route.name.includes(item.value)
+							? 'bg-primary text-white'
+							: 'hover:bg-gray-100',
+						isMinimal ? 'justify-center' : '',
+					]"
+					@click="$router.push(item.route)"
+				>
+					<Icon :name="item.icon" :size="18" />
+					<template v-if="!isMinimal">
+						{{ item.name }}
+					</template>
+				</button>
+			</template>
 
 			<button
-				:class="menuItemClass"
+				:class="[menuItemClass, isMinimal ? 'justify-center' : '']"
 				class="text-red-600 hover:bg-red-400/10 mt-auto"
 			>
 				<Icon name="LogOut" :size="18" />
-				Выйти
+				<template v-if="!isMinimal"> Выйти </template>
 			</button>
 		</div>
 	</div>
@@ -42,8 +45,11 @@
 
 <script>
 import { useAdminStore } from '../store/user.store'
-
+import { Tooltip } from '@programic/vue3-tooltip'
 export default {
+	components: {
+		Tooltip,
+	},
 	data: () => ({
 		items: [
 			{
@@ -84,6 +90,10 @@ export default {
 		},
 		menuItemClass() {
 			return 'h-[40px] flex items-center gap-2 text-sm text-left font-medium px-4 rounded-lg cursor-pointer'
+		},
+		isMinimal() {
+			if (this.$route.name === 'adminChats') return true
+			return false
 		},
 	},
 }

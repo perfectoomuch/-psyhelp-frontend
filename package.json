@@ -11,6 +11,7 @@
 	"dependencies": {
 		"@headlessui/vue": "^1.7.23",
 		"@internationalized/date": "^3.8.1",
+		"@programic/vue3-tooltip": "^1.0.0",
 		"@tailwindcss/vite": "^4.1.7",
 		"@types/js-cookie": "^3.0.6",
 		"@videojs-player/vue": "^1.0.0",
@@ -29,13 +30,15 @@
 		"pikaday": "^1.8.2",
 		"pinia": "^3.0.2",
 		"reka-ui": "^2.3.0",
+		"socket.io-client": "^4.8.1",
 		"swiper": "^11.2.7",
 		"tailwind-merge": "^3.3.0",
 		"tailwindcss": "^4.1.7",
 		"vaul-vue": "^0.4.1",
 		"video.js": "^8.22.0",
 		"vue": "^3.5.13",
-		"vue-router": "^4.5.1"
+		"vue-router": "^4.5.1",
+		"yup": "^1.6.1"
 	},
 	"devDependencies": {
 		"@types/node": "^22.15.21",

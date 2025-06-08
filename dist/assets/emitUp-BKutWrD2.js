@@ -1,0 +1,1 @@
+function p(s,r,i){var t,n;let e=s.$parent;for(;e;){const o=(n=(t=e.$options)==null?void 0:t.methods)==null?void 0:n[r];if(typeof o=="function"){const l=o.call(e,i);return Promise.resolve(l)}e=e.$parent}return Promise.reject(new Error(`Родитель с методом "${r}" не найден`))}export{p as e};

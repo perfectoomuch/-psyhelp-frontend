@@ -6,8 +6,6 @@ export class SpecialistService {
 	async getAll() {
 		try {
 			const response = await http.get('admin/specialists')
-			console.log(response.data)
-
 			return response.data
 		} catch (err) {
 			console.log(err)
@@ -52,7 +50,7 @@ export class SpecialistService {
 	async create(data: SpecialistBodyType) {
 		try {
 			const response = await http.post('admin/specialists/create', data)
-			return response.data
+			return response.data.id
 		} catch (err) {
 			console.log(err)
 			push.error('Ошибка при создании')

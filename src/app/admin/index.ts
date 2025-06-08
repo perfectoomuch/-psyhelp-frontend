@@ -46,6 +46,11 @@ export default {
 								import('./pages/dashboard/single_specialist.vue'),
 							name: 'adminSpecialistsSingle',
 						},
+						{
+							path: '/admin/dashboard/chats',
+							component: () => import('./pages/dashboard/chats.vue'),
+							name: 'adminChats',
+						},
 					],
 				},
 			],

@@ -5,6 +5,7 @@ import 'notivue/notification.css'
 import 'notivue/animations.css'
 import 'vidstack/bundle'
 import 'video.js/dist/video-js.css'
+import '@programic/vue3-tooltip/dist/index.css'
 import App from './App.vue'
 import router from './routes'
 import { createPinia } from 'pinia'
@@ -15,9 +16,18 @@ import currency from './utils/currency'
 import dayjs from 'dayjs'
 import { Icon } from './components/Icon'
 import { vMaska } from 'maska/vue'
+import Tooltip from '@programic/vue3-tooltip'
 
 const notivue = createNotivue({
 	position: 'bottom-right',
+	limit: 4,
+	enqueue: true,
+	avoidDuplicates: true,
+	notifications: {
+		global: {
+			duration: 3000,
+		},
+	},
 })
 const pinia = createPinia()
 const app = createApp(App)
@@ -27,6 +37,7 @@ app.config.globalProperties.$file = file
 app.config.globalProperties.$currency = currency
 app.config.globalProperties.$dayjs = dayjs
 
+app.use(Tooltip)
 app.directive('maska', vMaska)
 app.component('Icon', Icon)
 app.use(VueVideoPlayer)
