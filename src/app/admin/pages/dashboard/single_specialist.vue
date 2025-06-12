@@ -19,6 +19,32 @@
 
 			Сохранить
 		</button>
+		<AlertDialog>
+			<AlertDialogTrigger class="btn btn-error">
+				<span
+					class="loading loading-spinner text-primary"
+					v-show="saveLoading"
+				></span>
+
+				Удалить
+			</AlertDialogTrigger>
+			<AlertDialogContent>
+				<AlertDialogHeader>
+					<AlertDialogTitle>Вы точно хотите удалить?</AlertDialogTitle>
+					<AlertDialogDescription>
+						Запись будет удален безвозвратно
+					</AlertDialogDescription>
+				</AlertDialogHeader>
+				<AlertDialogFooter>
+					<AlertDialogCancel class="hover:bg-gray-100"
+						>Отмена</AlertDialogCancel
+					>
+					<AlertDialogAction @click="onDelete" class="text-white"
+						>Продолжить</AlertDialogAction
+					>
+				</AlertDialogFooter>
+			</AlertDialogContent>
+		</AlertDialog>
 	</div>
 
 	<div v-if="loading && item === null" class="flex justify-center">
@@ -162,20 +188,30 @@
 				</div>
 
 				<label class="label">Профессия</label>
-				<Select v-model="item.profession">
-					<SelectTrigger class="bg-white border-none shadow-none w-full">
-						<SelectValue placeholder="Выбрать" />
-					</SelectTrigger>
-					<SelectContent class="bg-white border-gray-200 max-h-[400px]">
-						<SelectItem
-							v-for="(item, index) in professionList"
-							:key="index"
-							:value="item.value"
-						>
-							{{ item.name }}
-						</SelectItem>
-					</SelectContent>
-				</Select>
+				<div class="flex gap-2">
+					<input class="input border" :value="professionSelected" readonly />
+					<DropdownMenu>
+						<DropdownMenuTrigger class="btn btn-sm h-full btn-secondary">
+							Выбрать
+							<Icon name="ChevronDown" :size="14" />
+						</DropdownMenuTrigger>
+						<DropdownMenuContent class="bg-white" side="bottom" align="end">
+							<DropdownMenuItem
+								v-for="(value, index) in professionList"
+								:key="index"
+								class="flex items-center justify-between"
+								@click="pushProfession(value.value)"
+							>
+								{{ value.name }}
+								<Icon
+									name="Check"
+									:size="14"
+									v-if="item.profession.includes(value.value)"
+								/>
+							</DropdownMenuItem>
+						</DropdownMenuContent>
+					</DropdownMenu>
+				</div>
 
 				<label class="label">Образование</label>
 				<input class="input border" v-model="item.education" required />
@@ -290,6 +326,17 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+	AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
 import * as yup from 'yup'
 
 export default {
@@ -307,6 +354,15 @@ export default {
 		DropdownMenuLabel,
 		DropdownMenuSeparator,
 		DropdownMenuTrigger,
+		AlertDialog,
+		AlertDialogAction,
+		AlertDialogCancel,
+		AlertDialogContent,
+		AlertDialogDescription,
+		AlertDialogFooter,
+		AlertDialogHeader,
+		AlertDialogTitle,
+		AlertDialogTrigger,
 	},
 	data: () => ({
 		specialistService: new SpecialistService(),
@@ -336,6 +392,11 @@ export default {
 		},
 		professionList() {
 			return this.profession().list
+		},
+		professionSelected() {
+			return this.item.profession
+				.map(el => this.profession(el).getProfessionByValue.name)
+				.join(', ')
 		},
 		religionList() {
 			return this.religion().list
@@ -374,6 +435,14 @@ export default {
 				this.item.methods.push(value)
 			}
 		},
+		pushProfession(value) {
+			if (this.item.profession.includes(value)) {
+				const index = this.item.profession.findIndex(el => el === value)
+				this.item.profession.splice(index, 1)
+			} else {
+				this.item.profession.push(value)
+			}
+		},
 		async onChangeFile(event, path) {
 			const file = event.target.files[0]
 			const filename = await upload(file)
@@ -400,9 +469,12 @@ export default {
 				price: yup.string().required('Стоимость сессии обязателен'),
 				message: yup.string().required('Сообщение визитка обязателен'),
 				education: yup.string().required('Образование обязателен'),
-				profession: yup.string().required('Профессия обязателен'),
+				profession: yup
+					.array()
+					.of(yup.string().required())
+					.min(1, 'Укажите хотя бы одну профессию'),
 				sessions: yup.string().required('Сессии обязателен'),
-				religion: yup.string().required('Религия обязателен'),
+				// religion: yup.string().required('Религия обязателен'),
 				experience_ethnic_group: yup
 					.string()
 					.required('Опыт с эт. группами обязателен'),
@@ -432,6 +504,10 @@ export default {
 			await this.specialistService.updateById(id, payload)
 			await this.getItem()
 			this.saveLoading = false
+		},
+		async onDelete() {
+			await this.specialistService.deleteById(this.item.id)
+			this.$router.push('/admin/dashboard/specialists')
 		},
 	},
 }

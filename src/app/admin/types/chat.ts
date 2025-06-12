@@ -3,3 +3,7 @@ export type ChatMessageType = {
 	attachments: string[]
 	from: string
 }
+
+export type ChatType = {
+	chat: ChatMessageType[]
+}

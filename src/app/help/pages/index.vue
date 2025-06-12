@@ -1,5 +1,10 @@
 <template>
-	<Header title="Помощь" description="Часто задаваемые вопросы" />
+	<div class="flex justify-between">
+		<Header title="Помощь" description="Часто задаваемые вопросы" />
+		<a href="https://t.me/Vottak_manager" class="btn btn-primary btn-soft">
+			Написать менеджеру
+		</a>
+	</div>
 
 	<div class="flex flex-col gap-4">
 		<div

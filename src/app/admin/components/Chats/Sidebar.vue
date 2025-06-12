@@ -7,18 +7,24 @@
 			<input
 				type="text"
 				class="input focus:outline-none bg-gray-100 rounded-lg"
-				placeholder="Поиск: id, клиент, имя"
+				placeholder="Поиск: id, username, имя, фамилия"
+				v-model="search"
 			/>
 		</div>
-		<div class="flex-1 overflow-y-scroll flex flex-col px-2 max-h-full">
+		<div class="flex-1 overflow-y-scroll flex flex-col gap-2 px-2 max-h-full">
 			<div
-				v-if="dialogs.length === 0"
+				v-if="getSearch.length === 0"
 				class="flex items-center justify-center flex-1 text-center text-sm flex-col px-5 leading-none gap-2"
 			>
 				<Icon name="Frown" :size="44" class="text-primary" />
-				<span class="opacity-65">Нет активных диалогов, вернитесь позже</span>
+				<span class="opacity-65">
+					<template v-if="dialogs.length === 0"
+						>Нет активных диалогов, вернитесь позже</template
+					>
+					<template v-else>Диалог не найден</template>
+				</span>
 			</div>
-			<template v-for="(item, index) in dialogs" :key="index">
+			<template v-for="(item, index) in getSearch" :key="index">
 				<div
 					class="card bg-base-100 card-sm border cursor-pointer hover:bg-gray-100 group rounded-lg"
 					@click="$emit('room', item.customer.id)"
@@ -44,7 +50,7 @@
 							</div>
 							<p class="truncate">
 								Сообщение:
-								{{ item.last.message }}
+								{{ item.last?.message }}
 							</p>
 						</div>
 					</div>
@@ -57,5 +63,21 @@
 <script>
 export default {
 	props: ['dialogs'],
+	data: () => ({
+		search: '',
+	}),
+	computed: {
+		getSearch() {
+			if (this.search.trim().length === 0) return this.dialogs
+			return this.dialogs.filter(
+				el =>
+					el.customer.id == this.search ||
+					el.customer.username.includes(this.search) ||
+					`${el.customer.first_name.toLowerCase()} ${el.customer.last_name.toLowerCase()}`.includes(
+						this.search.toLowerCase()
+					)
+			)
+		},
+	},
 }
 </script>

@@ -159,20 +159,30 @@
 				</div>
 
 				<label class="label">Профессия</label>
-				<Select v-model="item.profession">
-					<SelectTrigger class="bg-white border-none shadow-none w-full">
-						<SelectValue placeholder="Выбрать" />
-					</SelectTrigger>
-					<SelectContent class="bg-white border-gray-200 max-h-[400px]">
-						<SelectItem
-							v-for="(item, index) in professionList"
-							:key="index"
-							:value="item.value"
-						>
-							{{ item.name }}
-						</SelectItem>
-					</SelectContent>
-				</Select>
+				<div class="flex gap-2">
+					<input class="input border" :value="professionSelected" readonly />
+					<DropdownMenu>
+						<DropdownMenuTrigger class="btn btn-sm h-full btn-secondary">
+							Выбрать
+							<Icon name="ChevronDown" :size="14" />
+						</DropdownMenuTrigger>
+						<DropdownMenuContent class="bg-white" side="bottom" align="end">
+							<DropdownMenuItem
+								v-for="(value, index) in professionList"
+								:key="index"
+								class="flex items-center justify-between"
+								@click="pushProfession(value.value)"
+							>
+								{{ value.name }}
+								<Icon
+									name="Check"
+									:size="14"
+									v-if="item.profession.includes(value.value)"
+								/>
+							</DropdownMenuItem>
+						</DropdownMenuContent>
+					</DropdownMenu>
+				</div>
 
 				<label class="label">Образование</label>
 				<input class="input border" v-model="item.education" required />
@@ -180,7 +190,7 @@
 				<label class="label">Сессии было</label>
 				<input class="input border" v-model="item.sessions" required />
 
-				<label class="label">Религия</label>
+				<!-- <label class="label">Религия</label>
 				<Select v-model="item.religion">
 					<SelectTrigger class="bg-white border-none shadow-none w-full">
 						<SelectValue placeholder="Выбрать" />
@@ -194,7 +204,7 @@
 							{{ item.name }}
 						</SelectItem>
 					</SelectContent>
-				</Select>
+				</Select> -->
 
 				<label class="label">Есть ли опыт с этническими группами</label>
 				<Select v-model="item.experience_ethnic_group">
@@ -322,9 +332,9 @@ export default {
 			price: '',
 			message: '',
 			education: '',
-			profession: '',
+			profession: [],
 			sessions: '',
-			religion: '',
+			religion: null,
 			experience_ethnic_group: '',
 		},
 		gender,
@@ -348,6 +358,11 @@ export default {
 		},
 		professionList() {
 			return this.profession().list
+		},
+		professionSelected() {
+			return this.item.profession
+				.map(el => this.profession(el).getProfessionByValue.name)
+				.join(', ')
 		},
 		religionList() {
 			return this.religion().list
@@ -382,6 +397,14 @@ export default {
 				this.item.methods.push(value)
 			}
 		},
+		pushProfession(value) {
+			if (this.item.profession.includes(value)) {
+				const index = this.item.profession.findIndex(el => el === value)
+				this.item.profession.splice(index, 1)
+			} else {
+				this.item.profession.push(value)
+			}
+		},
 		async onChangeFile(event, path) {
 			const file = event.target.files[0]
 			const filename = await upload(file)
@@ -408,9 +431,12 @@ export default {
 				price: yup.string().required('Стоимость сессии обязателен'),
 				message: yup.string().required('Сообщение визитка обязателен'),
 				education: yup.string().required('Образование обязателен'),
-				profession: yup.string().required('Профессия обязателен'),
+				profession: yup
+					.array()
+					.of(yup.string().required())
+					.min(1, 'Укажите хотя бы одну профессию'),
 				sessions: yup.string().required('Сессии обязателен'),
-				religion: yup.string().required('Религия обязателен'),
+				// religion: yup.string().required('Религия обязателен'),
 				experience_ethnic_group: yup
 					.string()
 					.required('Опыт с эт. группами обязателен'),

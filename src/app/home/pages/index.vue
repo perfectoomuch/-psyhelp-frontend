@@ -1,100 +1,107 @@
-<template>
+<template v-if="filterFormShow">
 	<Header
-		title="Подобрать психолога"
-		description="Ответьте на следующие вопросы и мы подберем Вам психолога"
+		:title="header.title"
+		:description="header.description"
+		:backButtonText="tab === 'result' ? 'Заполнить заново' : ''"
+		@back="onBackToQuestions"
 	/>
 
-	<template v-if="filterFormShow">
-		<div v-if="tab === 'result'" class="flex flex-col gap-2 mb-4">
-			<div
-				class="h-[48px] card w-full bg-base-100 rounded-lg flex items-center flex-row px-4 font-semibold shadow-sm"
-				@click="filterFormToggle = !filterFormToggle"
+	<div class="flex-col gap-2" :class="tabResultClass">
+		<swiper
+			:slides-per-view="1"
+			:space-between="10"
+			:modules="modules"
+			:navigation="{
+				prevEl: '.prevEl',
+			}"
+			class="flex-1 w-full h-full"
+			@slideChange="onSlideChange"
+			:onSwiper="onSwiper"
+			:allowTouchMove="false"
+			:autoHeight="true"
+		>
+			<swiper-slide
+				v-for="(item, index) in questionsStore.questions"
+				:key="index"
 			>
-				<ListFilter class="size-4 mr-2" />
-				<span>Параметры фильтра</span>
-				<ChevronDown
-					class="size-4 ml-auto duration-300"
-					:class="filterFormToggle && 'rotate-180'"
-				/>
-			</div>
+				<div :id="`card-${index}`" class="w-full">
+					<div class="grid grid-cols-1 gap-2 pb-1">
+						<template v-for="(variant, j) in item.variants" :key="j">
+							<label
+								:for="`checkbox-${index}-${j}`"
+								class="flex items-center gap-2 py-3 px-2 border border-gray-200 rounded-lg cursor-pointer bg-base-100 shadow-sm"
+							>
+								<template v-if="item.select === 'multiple'">
+									<input
+										type="checkbox"
+										:id="`checkbox-${index}-${j}`"
+										v-model="preFilterForm[index].answer"
+										:value="variant"
+										class="checkbox checkbox-xs checkbox-primary"
+										@change="onChangeAnswer(index)"
+									/>
+								</template>
+								<template v-if="item.select === 'single'">
+									<input
+										type="radio"
+										:id="`checkbox-${index}-${j}`"
+										v-model="preFilterForm[index].answer"
+										:value="variant"
+										class="radio radio-xs radio-primary"
+										@change="onChangeAnswer(index)"
+									/>
+								</template>
 
-			<div class="grid grid-cols-2 gap-2">
-				<Select
-					v-for="(item, index) in questionsStore.filters"
-					:key="index"
-					v-model="afterFilterForm[index].answer"
-					@update:modelValue="onChangeFilter"
-				>
-					<SelectTrigger class="bg-white border-none shadow-md w-full">
-						<SelectValue :placeholder="item.question" />
-					</SelectTrigger>
-					<SelectContent class="bg-white border-gray-200 max-h-[400px]">
-						<SelectLabel>{{ item.question }}</SelectLabel>
-						<SelectItem
-							v-for="(variant, j) in item.variants"
-							:key="j"
-							:value="variant"
+								<p class="text-sm">{{ variant }}</p>
+							</label>
+						</template>
+						<label
+							v-if="item.enter_variant"
+							:for="`checkbox-${index}-enter`"
+							class="flex items-center gap-2 py-3 px-2 border border-gray-200 rounded-lg cursor-pointer bg-base-100 shadow-sm"
 						>
-							{{ variant }}
-						</SelectItem>
-					</SelectContent>
-				</Select>
-			</div>
-		</div>
+							<input
+								type="checkbox"
+								:id="`checkbox-${index}-enter`"
+								@change="onEnterVariant(index)"
+								:value="preFilterForm[index].enter_variant_state"
+								class="checkbox checkbox-xs checkbox-primary"
+							/>
 
-		<div class="flex-col gap-2" :class="tabResultClass">
-			<template v-for="(item, index) in questionsStore.questions" :key="index">
-				<div
-					:id="`card-${index}`"
-					class="card w-full bg-base-100 card-sm shadow-sm rounded-xl"
-				>
-					<div class="card-body">
-						<h2 class="card-title">{{ item.question }}</h2>
-						<div class="grid grid-cols-1 gap-2">
-							<div v-for="(variant, j) in item.variants" :key="j">
-								<label
-									:for="`checkbox-${index}-${j}`"
-									class="flex items-center gap-2 py-3 px-2 border border-gray-200 rounded-lg cursor-pointer"
-								>
-									<template v-if="item.select === 'multiple'">
-										<input
-											type="checkbox"
-											:id="`checkbox-${index}-${j}`"
-											v-model="preFilterForm[index].answer"
-											:value="variant"
-											class="checkbox checkbox-xs checkbox-primary"
-										/>
-									</template>
-									<template v-if="item.select === 'single'">
-										<input
-											type="radio"
-											:id="`checkbox-${index}-${j}`"
-											v-model="preFilterForm[index].answer"
-											:value="variant"
-											class="radio radio-xs radio-primary"
-										/>
-									</template>
-
-									<p class="text-sm">{{ variant }}</p>
-								</label>
-							</div>
-						</div>
+							<p class="text-sm">Ввести свой вариант</p>
+						</label>
+						<input
+							v-if="preFilterForm[index].enter_variant"
+							:disabled="!preFilterForm[index].enter_variant_state"
+							v-model="preFilterForm[index].custom_answer"
+							type="text"
+							placeholder="Ввести"
+							class="input w-full bg-white rounded-lg focus:outline-none focus:ring-0 border border-gray-200 shadow-sm h-[46px]"
+							:class="[preFilterForm[index].enter_variant_state ? '' : '']"
+						/>
 					</div>
 				</div>
-			</template>
+			</swiper-slide>
+		</swiper>
+		<div class="flex gap-2 justify-end mt-2">
+			<button class="btn prevEl">Назад</button>
 			<button
-				class="btn btn-lg w-full text-sm uppercase tracking-wide btn-primary"
+				v-if="activeIndex === questionsStore.questions.length - 1"
+				class="btn btn-primary"
 				@click="onFilter"
 			>
 				Подобрать психолога
 			</button>
+			<button v-else class="btn btn-primary nextEl" @click="onNextSwiper">
+				Вперед
+			</button>
 		</div>
-		<template v-if="tab === 'result'">
-			<SpecialistsLoop
-				:specialists="specialistsStore.specialists"
-				:loading="specialistsStore.loading"
-			/>
-		</template>
+	</div>
+	<template v-if="tab === 'result'">
+		<SpecialistsLoop
+			:specialists="specialistsStore.specialists"
+			:loading="specialistsStore.loading"
+		/>
 	</template>
 </template>
 
@@ -110,6 +117,11 @@ import { useQuestionsStore } from '../store/questions.store'
 import { useUserStore } from '../../../stores/user.store'
 import { useFilterSpecialistsStore } from '../store/specialists.store'
 import SpecialistsLoop from '../../specialists/components/SpecialistsLoop.vue'
+import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules'
+import { Swiper, SwiperSlide } from 'swiper/vue'
+import 'swiper/css'
+import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
+
 import {
 	Select,
 	SelectContent,
@@ -134,8 +146,13 @@ export default defineComponent({
 		SelectLabel,
 		SelectTrigger,
 		SelectValue,
+		Swiper,
+		SwiperSlide,
 	},
 	data: () => ({
+		swiperInstance: null,
+		modules: [Navigation],
+		activeIndex: 0,
 		preFilterForm: [],
 		afterFilterForm: [],
 		preFilterFormPayload: [],
@@ -146,16 +163,7 @@ export default defineComponent({
 		filterFormToggle: false,
 	}),
 	async created() {
-		await Promise.all(
-			this.questionsStore.questions.map(el => {
-				this.preFilterForm.push({
-					local_id: el.id,
-					question: el.question,
-					answer: [],
-					field: el.field,
-				})
-			})
-		)
+		this.getPreFilterForm()
 		await Promise.all(
 			this.questionsStore.filters.map(el => {
 				this.afterFilterForm.push({
@@ -167,57 +175,6 @@ export default defineComponent({
 			})
 		)
 		this.filterFormShow = true
-
-		this.preFilterForm = [
-			{
-				local_id: 1000,
-				question: 'Что вы чувствуете?',
-				answer: ['Тревога, стресс'],
-				field: '',
-			},
-			{
-				local_id: 1001,
-				question: 'Какие у вас проблемы?',
-				answer: ['Прокрастинация, перфекционизм'],
-				field: '',
-			},
-			{
-				local_id: 1002,
-				question: 'Что с вами произошло?',
-				answer: 'Семейные или партнерские конфликты',
-				field: '',
-			},
-			{
-				local_id: 1003,
-				question: 'Предпочтения по полу специалиста',
-				answer: 'Неважно',
-				field: 'gender',
-			},
-			{
-				local_id: 1004,
-				question: 'Возраст психолога',
-				answer: 'Неважно',
-				field: 'age',
-			},
-			{
-				local_id: 1005,
-				question: 'Опыт работы',
-				answer: 'Неважно',
-				field: 'experience_years',
-			},
-			{
-				local_id: 1007,
-				question: 'Бюджет на сессию',
-				answer: 'От 5000 до 10000 ₽',
-				field: 'price',
-			},
-			{
-				local_id: 1008,
-				question: 'Опыт работы с этническими группами',
-				answer: 'Неважно',
-				field: 'experience_ethnic_group',
-			},
-		]
 	},
 	computed: {
 		questionsStore() {
@@ -237,54 +194,70 @@ export default defineComponent({
 				return 'flex'
 			}
 		},
+		header() {
+			if (this.tab === 'form') {
+				const current = this.questionsStore.questions[this.activeIndex]
+				return {
+					title: current.question,
+					description: current.description,
+				}
+			} else {
+				return {
+					title: 'Специалисты по вашим критериям',
+					description:
+						'На основе ваших ответов мы нашли психологов, которые наиболее соответствуют вашему запросу',
+				}
+			}
+		},
 	},
 	methods: {
-		async onFilter() {
-			const emptyFieldIndex = this.preFilterForm.findIndex(
-				el => el.answer.length === 0
+		onSwiper(swiper) {
+			this.swiperInstance = swiper
+		},
+		onSlideChange(event) {
+			this.activeIndex = event.activeIndex
+		},
+		async getPreFilterForm() {
+			this.preFilterForm = []
+			await Promise.all(
+				this.questionsStore.questions.map(el => {
+					this.preFilterForm.push({
+						local_id: el.id,
+						question: el.question,
+						answer: [],
+						field: el.field,
+						enter_variant: el.enter_variant,
+						enter_variant_state: false,
+						custom_answer: '',
+					})
+				})
 			)
+		},
+		async onFilter() {
+			const payload = this.preFilterForm.map(el => {
+				if (Array.isArray(el.answer)) return el
+				if (typeof el.answer === 'string') {
+					const answer = el.answer
+					const customAnswer = el.custom_answer
+					const result = []
+					result.push(answer)
 
-			const emptyField = this.preFilterForm[emptyFieldIndex]
+					if (el.enter_variant) {
+						result.push(customAnswer)
+					}
 
-			if (emptyFieldIndex > -1) {
-				if (emptyField.select === 'multiple') {
-					this.$toast.error('Выберите хотя бы одну')
-				} else {
-					this.$toast.error('Выберите параметр')
+					return {
+						...el,
+						answer: result,
+					}
 				}
+				return el
+			})
+			this.filterFormPayload = payload
 
-				document.querySelector(`#card-${emptyFieldIndex}`).scrollIntoView({
-					behavior: 'smooth',
-				})
-			} else {
-				const payload = this.preFilterForm.map(el => {
-					if (Array.isArray(el.answer)) return el
-					if (typeof el.answer === 'string') {
-						return {
-							...el,
-							answer: [el.answer],
-						}
-					}
-					return el
-				})
-				this.filterFormPayload = payload
-
-				await this.specialistsService.fetchSpecialistsByFilter(payload)
-				this.tab = 'result'
-				window.scrollTo({ top: 0, behavior: 'auto' })
-
-				this.afterFilterForm.map(el => {
-					const parent = this.preFilterForm.find(
-						subEl => subEl.local_id === el.local_id
-					)
-					if (parent) {
-						const index = this.afterFilterForm.findIndex(
-							subEl => subEl.local_id === el.local_id
-						)
-						this.afterFilterForm[index].answer = parent.answer
-					}
-				})
-			}
+			await this.specialistsService.fetchSpecialistsByFilter(payload)
+			this.tab = 'result'
+			window.scrollTo({ top: 0, behavior: 'auto' })
 		},
 		async onBooking(data) {
 			const payload = {
@@ -296,41 +269,43 @@ export default defineComponent({
 			const result = await this.bidService.createBid(payload)
 			return result
 		},
-		async onChangeFilter() {
-			const payloadPreFilter = this.preFilterForm.map(el => {
-				if (Array.isArray(el.answer)) return el
-				if (typeof el.answer === 'string') {
-					return {
-						...el,
-						answer: [el.answer],
-					}
+		onChangeAnswer(index) {
+			// this.preFilterForm[index].enter_variant_state = false
+		},
+		onEnterVariant(index) {
+			this.preFilterForm[index].enter_variant_state =
+				!this.preFilterForm[index].enter_variant_state
+			this.preFilterForm[index].custom_answer = ''
+		},
+		onNextSwiper() {
+			const answer = this.preFilterForm[this.activeIndex].answer
+			const customAnswer = this.preFilterForm[this.activeIndex].custom_answer
+			const enableEnterVariant =
+				this.preFilterForm[this.activeIndex].enter_variant
+
+			console.log(answer)
+			console.log(customAnswer)
+			console.log(enableEnterVariant)
+			if (enableEnterVariant) {
+				const answerBool =
+					customAnswer.length === 0 && answer.length === 0 ? false : true
+
+				if (!answerBool) {
+					this.$toast.error('Выберите хотя бы 1 вариант или введите свой')
+					return
 				}
-				return el
-			})
-			const preFilterDeleteDuplicates = payloadPreFilter.filter(
-				el =>
-					!this.afterFilterForm.some(subEl => subEl.local_id === el.local_id)
-			)
-
-			const mergeFilter = [
-				...preFilterDeleteDuplicates,
-				...this.afterFilterForm,
-			]
-
-			const payload = mergeFilter.map(el => {
-				if (Array.isArray(el.answer)) return el
-				if (typeof el.answer === 'string') {
-					return {
-						...el,
-						answer: el.answer.length > 0 ? [el.answer] : [''],
-					}
+			} else {
+				if (answer.length === 0) {
+					this.$toast.error('Выберите хотя бы 1 вариант')
+					return
 				}
-				return el
-			})
-
-			await this.specialistsService.fetchSpecialistsByFilter(payload)
-			this.tab = 'result'
-			window.scrollTo({ top: 0, behavior: 'auto' })
+			}
+			this.swiperInstance.slideNext()
+		},
+		async onBackToQuestions() {
+			await this.getPreFilterForm()
+			this.swiperInstance.slideTo(0)
+			this.tab = 'form'
 		},
 	},
 })

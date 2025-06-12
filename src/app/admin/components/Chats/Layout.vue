@@ -29,8 +29,19 @@ export default {
 			data: null,
 		},
 	}),
-	created() {
+	async created() {
 		this.dialogs = this.chats
+
+		if (this.$route.query?.customer) {
+			const customerId = this.$route.query.customer
+
+			const index = this.dialogs.findIndex(el => el.customer.id === customerId)
+			if (index > -1) {
+				await this.onChangeRoom(this.$route.query?.customer)
+			} else {
+				this.$toast.info('Чат с пользователем не найден')
+			}
+		}
 	},
 	mounted() {
 		socket.on('message', async data => {
@@ -71,11 +82,19 @@ export default {
 
 			if (response.id === this.room.data?.id) {
 				this.room.data = response
+
+				this.$nextTick(() => {
+					document.querySelector('.last_message').scrollIntoView({
+						behavior: 'smooth',
+					})
+				})
 			}
 		},
 		updateDialog(id, last) {
 			const dialogIndex = this.dialogs.findIndex(el => el.id === id)
-			this.dialogs[dialogIndex].last = last
+			if (dialogIndex > -1) {
+				this.dialogs[dialogIndex].last = last
+			}
 		},
 		async updateRoom(customer_id) {
 			if (customer_id === this.room.data?.customer.id) {

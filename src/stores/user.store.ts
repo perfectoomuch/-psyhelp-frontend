@@ -23,7 +23,7 @@ export const useUserStore = defineStore('user', {
 	state: () =>
 		({
 			user: null,
-			loading: false,
+			loading: true,
 		} as any),
 	actions: {
 		isFilled({ email, first_name, last_name }: UserProfileType) {

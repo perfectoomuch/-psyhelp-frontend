@@ -45,7 +45,7 @@ export const gender = (val?: string) => {
 	}
 }
 
-export const profession = (val?: string) => {
+export const profession = (val?: string | string[]) => {
 	const obj = {
 		psychologist: 'Психолог',
 		psychotherapist: 'Психотерапевт',
@@ -54,7 +54,12 @@ export const profession = (val?: string) => {
 
 	const list = Object.entries(obj).map(el => ({ value: el[0], name: el[1] }))
 	let getProfessionByValue = null
-	if (val) getProfessionByValue = list.find(el => el.value === val)
+	if (!Array.isArray(val)) {
+		getProfessionByValue = list.find(el => el.value === val)
+	}
+	if (Array.isArray(val)) {
+		getProfessionByValue = list.filter(el => val.includes(el.value))
+	}
 
 	return {
 		obj,
@@ -63,7 +68,7 @@ export const profession = (val?: string) => {
 	}
 }
 
-export const route = (val?: string) => {
+export const route = (val?: string | string[]) => {
 	const obj = {
 		adult: 'Взрослые',
 		child: 'Дети',
@@ -73,7 +78,12 @@ export const route = (val?: string) => {
 
 	const list = Object.entries(obj).map(el => ({ value: el[0], name: el[1] }))
 	let getRouteByValue = null
-	if (val) getRouteByValue = list.find(el => el.value === val)
+	if (!Array.isArray(val)) {
+		getRouteByValue = list.find(el => el.value === val)
+	}
+	if (Array.isArray(val)) {
+		getRouteByValue = list.filter(el => val.includes(el.value))
+	}
 
 	return {
 		obj,

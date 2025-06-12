@@ -47,6 +47,16 @@ export class SpecialistService {
 		}
 	}
 
+	async deleteById(id: string) {
+		try {
+			await http.post(`admin/specialists/delete/${id}`)
+			push.success('Запись удален')
+		} catch (err) {
+			console.log(err)
+			push.error('Ошибка при удалении')
+		}
+	}
+
 	async create(data: SpecialistBodyType) {
 		try {
 			const response = await http.post('admin/specialists/create', data)

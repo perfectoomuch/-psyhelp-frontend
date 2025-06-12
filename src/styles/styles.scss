@@ -13,3 +13,33 @@
 // .btn-primary {
 // 	background-color: var(--color-primary) !important;
 // }
+
+.date-picker *,
+.time-picker * {
+	font-family: 'Commissioner', sans-serif;
+}
+
+.date-picker {
+	.date-picker-header__value {
+		button {
+			font-weight: 500 !important;
+		}
+	}
+
+	.date-picker-header {
+		.lucide {
+			width: 18px;
+			height: 18px;
+		}
+		> .button {
+			padding-left: 0 !important;
+			padding-right: 0 !important;
+		}
+	}
+}
+
+.time-picker {
+	.time-picker-clock__item {
+		font-size: 14px !important;
+	}
+}

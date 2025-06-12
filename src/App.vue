@@ -11,8 +11,8 @@
 		<template
 			v-if="!userStore.$state.loading && userStore.$state.user !== null"
 		>
-			<DefaultLayout v-if="userStore.$state.user?.filled" />
-			<Intro v-if="!userStore.$state.user?.filled" />
+			<DefaultLayout key="" />
+			<!-- <Intro v-if="!userStore.$state.user?.filled" /> -->
 		</template>
 	</template>
 
@@ -34,10 +34,24 @@ export default {
 		Toast,
 		Intro,
 	},
-	created() {
+	async created() {
 		const telegramStore = useTelegramStore()
 		const userStore = useUserStore()
 		telegramStore.setInstance()
+
+		if (import.meta.env.DEV) {
+			await userStore.getUser({
+				email: 'mail@mail.com',
+				chat_id: 652674468,
+				username: 'exetmo',
+				first_name: 'test',
+				last_name: 'test',
+				created_at: '2025-05-25T19:43:05.084Z',
+				updated_at: '2025-05-25T19:43:23.948Z',
+				__v: 0,
+				id: '683372c926daf44a92b1f6b4',
+			})
+		}
 	},
 	computed: {
 		telegramStore() {

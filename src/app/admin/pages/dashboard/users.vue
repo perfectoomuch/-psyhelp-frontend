@@ -34,6 +34,7 @@
 						<th class="font-medium">Логин</th>
 						<th class="font-medium">Email</th>
 						<th class="font-medium">Имя и фамилия</th>
+						<th class="font-medium"></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -62,6 +63,17 @@
 						<td>
 							{{ item.first_name }}
 							{{ item.last_name }}
+						</td>
+						<td>
+							<button
+								class="btn btn-sm w-full"
+								@click="
+									$router.push(`/admin/dashboard/chats?customer=${item.id}`)
+								"
+							>
+								<Icon name="MessageCircleMore" :size="14" />
+								Чат
+							</button>
 						</td>
 					</tr>
 				</tbody>

@@ -1,5 +1,5 @@
 import { http } from '@/plugins/axios'
-import type { ChatMessageType } from '../types/chat'
+import type { ChatMessageType, ChatType } from '../types/chat'
 
 export class ChatService {
 	async getAll() {
