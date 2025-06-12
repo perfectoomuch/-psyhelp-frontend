@@ -235,26 +235,16 @@ export default defineComponent({
 		},
 		async onFilter() {
 			const payload = this.preFilterForm.map(el => {
-				if (Array.isArray(el.answer)) return el
-				if (typeof el.answer === 'string') {
-					const answer = el.answer
-					const customAnswer = el.custom_answer
-					const result = []
-					result.push(answer)
+				const answer = Array.isArray(el.answer)
+					? [...el.answer, el.custom_answer]
+					: [el.answer]
 
-					if (el.enter_variant) {
-						result.push(customAnswer)
-					}
-
-					return {
-						...el,
-						answer: result,
-					}
+				return {
+					...el,
+					answer: answer.filter(el => el.length > 0),
 				}
-				return el
 			})
 			this.filterFormPayload = payload
-
 			await this.specialistsService.fetchSpecialistsByFilter(payload)
 			this.tab = 'result'
 			window.scrollTo({ top: 0, behavior: 'auto' })
@@ -282,10 +272,6 @@ export default defineComponent({
 			const customAnswer = this.preFilterForm[this.activeIndex].custom_answer
 			const enableEnterVariant =
 				this.preFilterForm[this.activeIndex].enter_variant
-
-			console.log(answer)
-			console.log(customAnswer)
-			console.log(enableEnterVariant)
 			if (enableEnterVariant) {
 				const answerBool =
 					customAnswer.length === 0 && answer.length === 0 ? false : true

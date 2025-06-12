@@ -56,7 +56,7 @@ export type SpecialistBodyType = {
 	price: string
 	message: string
 	education: string
-	profession: SpecialistProfessionEnum
+	profession: SpecialistProfessionEnum[]
 	religion: SpecialistReligionEnum
 	experience_ethnic_group: SpecialistEthnicEnum
 	sessions: string

@@ -36,7 +36,7 @@
 		v-if="!loading && specialistsMap.length === 0"
 	>
 		<Info class="min-size-4 text-primary" />
-		<span>На данный момент нет пользователей. Вернитесь позже</span>
+		<span>На данный момент нет специалистов. Добавьте специалиста</span>
 	</div>
 
 	<template v-if="!loading && specialistsMap.length > 0">
@@ -44,8 +44,7 @@
 			<table class="table table-sm">
 				<thead>
 					<tr>
-						<th class="font-medium">Email</th>
-						<th class="font-medium">Имя и фамилия</th>
+						<th class="font-medium">Имя</th>
 						<th class="font-medium">Возраст</th>
 						<th class="font-medium">Опыт</th>
 						<th class="font-medium">Цена</th>
@@ -56,12 +55,8 @@
 				<tbody>
 					<tr v-for="(item, index) in specialistsMap" :key="index">
 						<td>
-							{{ item.email }}
-						</td>
-						<td>
 							<span class="whitespace-nowrap text-primary cursor-pointer">
 								{{ item.first_name }}
-								{{ item.last_name }}
 							</span>
 						</td>
 						<td>

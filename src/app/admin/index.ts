@@ -51,6 +51,11 @@ export default {
 							component: () => import('./pages/dashboard/chats.vue'),
 							name: 'adminChats',
 						},
+						{
+							path: '/admin/dashboard/methods',
+							component: () => import('./pages/dashboard/methods.vue'),
+							name: 'adminMethods',
+						},
 					],
 				},
 			],

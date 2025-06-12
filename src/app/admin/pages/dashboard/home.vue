@@ -48,7 +48,6 @@
 								<PopoverTrigger as-child>
 									<span class="whitespace-nowrap text-primary cursor-pointer">
 										{{ item.customer.first_name }}
-										{{ item.customer.last_name }}
 									</span>
 								</PopoverTrigger>
 								<PopoverContent class="w-80">
@@ -94,7 +93,6 @@
 								<PopoverTrigger as-child>
 									<span class="whitespace-nowrap text-primary cursor-pointer">
 										{{ item.specialist.first_name }}
-										{{ item.specialist.last_name }}
 									</span>
 								</PopoverTrigger>
 								<PopoverContent class="w-80">
@@ -111,21 +109,13 @@
 											<img
 												:src="$file(item.specialist.photo)"
 												alt=""
-												class="w-[90px] h-[90px] rounded-lg mb-2"
+												class="w-[90px] h-[90px] rounded-lg mb-2 object-cover"
 												v-if="item.specialist.photo"
 											/>
 											<div class="grid grid-cols-3 items-center gap-4 text-sm">
-												<span>Email</span>
-												<span class="col-span-2">
-													{{ item.specialist.email }}
-												</span>
 												<span>Профессия</span>
 												<span class="col-span-2">
 													{{ getProfession(item.specialist.profession) }}
-												</span>
-												<span>Направлении</span>
-												<span class="col-span-2">
-													{{ getRoute(item.specialist.experience_route) }}
 												</span>
 												<span>Цена</span>
 												<span class="col-span-2">
@@ -207,7 +197,7 @@
 							"
 							readonly
 						/>
-						<label class="label">Желаемая дата на сессию</label>
+						<label class="label">Желаемая дата на сессию (по мск)</label>
 						<input class="input border" :value="currentBid.date" readonly />
 
 						<label class="label">Статус</label>
@@ -243,21 +233,7 @@
 
 						<button class="btn btn-accent">Выставить счет на оплату</button>
 					</fieldset>
-					<fieldset
-						class="fieldset bg-base-200 border-base-300 rounded-box border p-4"
-						v-if="currentBid.body.length > 0"
-					>
-						<legend class="fieldset-legend">Опрос</legend>
 
-						<template v-for="(item, index) in currentBid.body" :key="index">
-							<label class="label">{{ item.question }}</label>
-							<input
-								class="input border"
-								:value="item.answer.join(', ')"
-								readonly
-							/>
-						</template>
-					</fieldset>
 					<fieldset
 						class="fieldset bg-base-200 border-base-300 rounded-box border p-4"
 					>
@@ -278,8 +254,42 @@
 						<label class="label">Email</label>
 						<input class="input border" :value="currentBid.customer.email" />
 
-						<button class="btn btn-primary">Написать сообщение</button>
+						<label class="label">Telegram username</label>
+						<input class="input border" :value="currentBid.customer.username" />
+
+						<router-link
+							:to="`/admin/dashboard/chats?customer=${currentBid.customer.id}`"
+							class="btn w-full btn-primary"
+						>
+							Написать сообщение
+						</router-link>
 					</fieldset>
+
+					<fieldset
+						class="fieldset bg-base-200 border-base-300 rounded-box border p-4"
+						v-if="currentBid.body.length > 0"
+					>
+						<legend class="fieldset-legend">Опрос</legend>
+
+						<template v-for="(item, index) in currentBid.body" :key="index">
+							<label class="label">{{ item.question }}</label>
+							<template v-if="item.answer.length <= 2">
+								<input
+									class="input border"
+									:value="item.answer.join(', ')"
+									readonly
+								/>
+							</template>
+							<template v-else>
+								<textarea
+									class="textarea w-full"
+									:value="item.answer.join('\n')"
+									placeholder="Bio"
+								></textarea>
+							</template>
+						</template>
+					</fieldset>
+
 					<fieldset
 						class="fieldset bg-base-200 border-base-300 rounded-box border p-4"
 					>
@@ -299,64 +309,10 @@
 							readonly
 						/>
 
-						<label class="label">Фамилия</label>
-						<input
-							class="input border"
-							:value="currentBid.specialist.last_name"
-							readonly
-						/>
-
-						<label class="label">Email</label>
-						<input class="input border" :value="currentBid.specialist.email" />
-
-						<label class="label">Профессия</label>
-						<input
-							class="input border"
-							:value="getProfession(currentBid.specialist.profession)"
-						/>
-
-						<label class="label">Направлении</label>
-						<input
-							class="input border"
-							:value="getRoute(currentBid.specialist.experience_route)"
-						/>
-
 						<label class="label">Цена</label>
 						<input
 							class="input border"
 							:value="$currency(currentBid.specialist.price)"
-						/>
-
-						<label class="label">Методы</label>
-						<ul v-if="currentBid.specialist.methods.length > 0">
-							<li
-								v-for="(item, index) in currentBid.specialist.methods"
-								:key="index"
-							>
-								{{ methodStore.getMethod(item).name }}
-							</li>
-						</ul>
-						<span v-else>Не указан</span>
-
-						<label class="label">Опыт работы в годах</label>
-						<input
-							class="input border"
-							:value="currentBid.specialist.experience_years"
-						/>
-
-						<label class="label">Возраст в годах</label>
-						<input class="input border" :value="currentBid.specialist.age" />
-
-						<label class="label">Описание профиля</label>
-						<input
-							class="input border"
-							:value="currentBid.specialist.message"
-						/>
-
-						<label class="label">Образования</label>
-						<input
-							class="input border"
-							:value="currentBid.specialist.education"
 						/>
 
 						<label class="label">Сессии было</label>
@@ -365,18 +321,12 @@
 							:value="currentBid.specialist.sessions"
 						/>
 
-						<label class="label">Опыт работы с этническими группами</label>
-						<input
-							class="input border"
-							:value="
-								currentBid.specialist.experience_ethnic_group === 'yes'
-									? 'Да'
-									: 'Нет'
-							"
-						/>
-						<!-- Профессия -->
-						<!-- <button class="btn btn-primary">Написать сообщение</button>
-						<button class="btn btn-accent">Выставить счет на оплату</button> -->
+						<router-link
+							:to="`/admin/dashboard/specialists/${currentBid.specialist.id}`"
+							class="btn w-full btn-primary"
+						>
+							Открыть
+						</router-link>
 					</fieldset>
 				</div>
 			</template>
@@ -392,7 +342,7 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from '@/components/ui/popover'
-import { getProfession, getRoute } from '@/utils/specialist.ts'
+import { getRoute, profession } from '@/utils/specialist.ts'
 import { getStatus, getStatusList } from '@/utils/status'
 import {
 	DropdownMenu,
@@ -441,7 +391,7 @@ export default {
 		currentBid: null,
 		drawerOpen: false,
 		drawerLoading: true,
-		getProfession,
+		profession,
 		getRoute,
 		getStatus,
 		getStatusList,
@@ -461,6 +411,11 @@ export default {
 		},
 	},
 	methods: {
+		getProfession(array) {
+			return this.profession(array)
+				.getProfessionByValue.map(el => el.name)
+				.join(', ')
+		},
 		async getAll() {
 			this.bids = await this.bidService.getAll()
 			this.loading = false

@@ -67,8 +67,14 @@ export default {
 			{
 				name: 'Специалисты',
 				route: '/admin/dashboard/specialists',
-				icon: 'Star',
+				icon: 'BriefcaseBusiness',
 				value: 'adminSpecialists',
+			},
+			{
+				name: 'Методы лечения',
+				route: '/admin/dashboard/methods',
+				icon: 'Rows3',
+				value: 'adminMethods',
 			},
 			{
 				name: 'Чаты',

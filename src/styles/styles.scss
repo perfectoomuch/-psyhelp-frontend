@@ -43,3 +43,8 @@
 		font-size: 14px !important;
 	}
 }
+[data-reka-popper-content-wrapper]:focus {
+	// @apply bg-gray-100 !important;
+	background-color: #f3f4f6 !important;
+	background: #f3f4f6 !important;
+}

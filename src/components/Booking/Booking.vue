@@ -44,7 +44,7 @@
 					<fieldset class="fieldset">
 						<legend class="fieldset-legend text-sm">Желаемая дата</legend>
 
-						<MaterializeDatepicker v-model="form.date">
+						<MaterializeDatepicker v-model="form.date" :onlyAfter="true">
 							<input
 								type="text"
 								class="input pika-single w-full text-base"
