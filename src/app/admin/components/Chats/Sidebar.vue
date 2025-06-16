@@ -33,7 +33,10 @@
 						<div
 							class="min-w-12 h-12 rounded-full uppercase flex items-center justify-center bg-gray-100 border text-md font-semibold group-hover:bg-white"
 						>
-							{{ Array.from(item.customer.username)[0] }}
+							<template v-if="item.customer.username">
+								{{ Array.from(item.customer.username)[0] }}
+							</template>
+							<template v-else>-</template>
 						</div>
 						<div class="flex flex-col w-[calc(100%-52px)] gap-0.5">
 							<div class="flex justify-between">
@@ -68,15 +71,21 @@ export default {
 	}),
 	computed: {
 		getSearch() {
-			if (this.search.trim().length === 0) return this.dialogs
-			return this.dialogs.filter(
-				el =>
-					el.customer.id == this.search ||
-					el.customer.username.includes(this.search) ||
-					`${el.customer.first_name.toLowerCase()} ${el.customer.last_name.toLowerCase()}`.includes(
-						this.search.toLowerCase()
-					)
-			)
+			let result = []
+			if (this.search.trim().length === 0) {
+				result = this.dialogs
+			} else {
+				result = this.dialogs.filter(
+					el =>
+						el.customer.id == this.search ||
+						el.customer.username.includes(this.search) ||
+						`${el.customer.first_name.toLowerCase()} ${el.customer.last_name.toLowerCase()}`.includes(
+							this.search.toLowerCase()
+						)
+				)
+			}
+
+			return result.filter(el => el.customer !== null)
 		},
 	},
 }

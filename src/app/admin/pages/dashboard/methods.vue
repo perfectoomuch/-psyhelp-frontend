@@ -38,7 +38,7 @@
 	</div>
 
 	<div role="alert" class="alert" v-if="!loading && methods.length === 0">
-		<Info class="min-size-4 text-primary" />
+		<Icon name="Info" class="min-size-4 text-primary" />
 		<span>На данный момент нет методов. Добавьте метод</span>
 	</div>
 

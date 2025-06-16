@@ -35,7 +35,7 @@
 		class="alert"
 		v-if="!loading && specialistsMap.length === 0"
 	>
-		<Info class="min-size-4 text-primary" />
+		<Icon name="Info" class="min-size-4 text-primary" />
 		<span>На данный момент нет специалистов. Добавьте специалиста</span>
 	</div>
 
@@ -57,6 +57,7 @@
 						<td>
 							<span class="whitespace-nowrap text-primary cursor-pointer">
 								{{ item.first_name }}
+								{{ item.last_name }}
 							</span>
 						</td>
 						<td>

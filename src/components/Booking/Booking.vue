@@ -1,6 +1,6 @@
 <template>
 	<Dialog v-model:open="open">
-		<DialogContent class="bg-white top-10 translate-y-0">
+		<DialogContent class="bg-white">
 			<div
 				class="flex flex-col items-center justify-center gap-4 text-center"
 				v-if="showSuccessAlert"
@@ -50,7 +50,7 @@
 								class="input pika-single w-full text-base"
 								placeholder="Выбрать дату"
 								:value="
-									form.date ? $dayjs(form.date).format('DD MMMM, YYYY') : ''
+									form.date ? $dayjs(form.date).format('DD MMM, YYYY') : ''
 								"
 								required
 								readonly
@@ -61,7 +61,7 @@
 					</fieldset>
 					<fieldset class="fieldset">
 						<legend class="fieldset-legend text-sm">Желаемое время</legend>
-						<MaterializeTimepicker v-model="form.time">
+						<ScrollTimepicker v-model="form.time">
 							<input
 								type="text"
 								class="input w-full text-base"
@@ -70,17 +70,21 @@
 								required
 								readonly
 							/>
-						</MaterializeTimepicker>
+						</ScrollTimepicker>
 
-						<p class="label">Укажите по мск времени</p>
+						<p class="label">Укажите время по мск</p>
 					</fieldset>
 
-					<button class="btn btn-md btn-primary mt-4" :disabled="loading">
+					<button
+						class="btn btn-md btn-primary mt-4"
+						type="submit"
+						:disabled="loading"
+					>
 						<span
 							v-if="loading"
 							class="loading loading-sm loading-spinner"
 						></span>
-						<template v-else> Отправить заявку </template>
+						<template v-else> Записаться </template>
 					</button>
 				</form>
 			</template>
@@ -109,6 +113,8 @@ import {
 } from '@/components/ui/dialog'
 import MaterializeDatepicker from '../Pickers/MaterializeDatepicker.vue'
 import MaterializeTimepicker from '../Pickers/MaterializeTimepicker.vue'
+import ScrollTimepicker from '../Pickers/ScrollTimepicker.vue'
+import ScrollDatepicker from '../Pickers/ScrollDatepicker.vue'
 
 export default {
 	components: {
@@ -126,6 +132,8 @@ export default {
 		DialogTrigger,
 		MaterializeDatepicker,
 		MaterializeTimepicker,
+		ScrollTimepicker,
+		ScrollDatepicker,
 	},
 	data: () => ({
 		open: false,

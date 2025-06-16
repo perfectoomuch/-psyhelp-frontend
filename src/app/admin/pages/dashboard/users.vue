@@ -20,7 +20,7 @@
 	</div>
 
 	<div role="alert" class="alert" v-if="!loading && customersMap.length === 0">
-		<Info class="min-size-4 text-primary" />
+		<Icon name="Info" class="min-size-4 text-primary" />
 		<span>На данный момент нет пользователей. Вернитесь позже</span>
 	</div>
 

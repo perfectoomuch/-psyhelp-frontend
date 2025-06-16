@@ -22,17 +22,17 @@
 			</p>
 			<p v-if="item.education">
 				<span class="text-[16px] text-normal">🎓&nbsp;</span>
-				<span class="border-b text-accent">Образование:</span>
+				<span class="text-accent">Образование:</span>
 				{{ item.education }}
 			</p>
 			<p v-if="route">
 				<span class="text-[16px] text-normal">🔀&nbsp;</span>
-				<span class="border-b text-accent">Направлении:</span>
+				<span class="text-accent">Направлении:</span>
 				{{ route }}
 			</p>
 			<p v-if="item.sessions">
 				<span class="text-[16px] text-normal">📞&nbsp;</span>
-				<span class="border-b text-accent">Проведено консультаций:</span>
+				<span class="text-accent">Проведено консультаций более:</span>
 				{{ item.sessions }}
 			</p>
 
@@ -47,24 +47,31 @@
 				<div v-if="more" class="flex flex-col" style="gap: calc(0.25rem * 2)">
 					<p v-if="item.profession">
 						<span class="text-[16px] text-normal">💼&nbsp;</span>
-						<span class="border-b text-accent">Профессия:</span>
+						<span class="text-accent">Профессия:</span>
 						{{ profession }}
 					</p>
 					<p v-if="item.age">
 						<span class="text-[16px] text-normal">📅&nbsp;</span>
-						<span class="border-b text-accent">Возраст:</span>
+						<span class="text-accent">Возраст:</span>
 						{{ item.age }}
 					</p>
 					<p v-if="item.experience_years">
 						<span class="text-[16px] text-normal">🏆&nbsp;</span>
-						<span class="border-b text-accent">Опыт работы (в годах):</span>
+						<span class="text-accent">Опыт работы (в годах):</span>
 						{{ item.experience_years }}
+					</p>
+					<p @click="openReviews">
+						<span class="text-[16px] text-normal">💬&nbsp;</span>
+						<span class="border-b text-accent">Отзывы:</span>
+						{{ item.reviews_count }}
 					</p>
 				</div>
 			</transition>
 
-			<div class="card-actions items-center justify-between relative z-10">
-				<span class="text-lg font-semibold">
+			<div
+				class="card-actions items-center justify-between relative z-10 gap-0"
+			>
+				<span class="text-base font-semibold">
 					{{ $currency(item.price) }}
 					<em class="text-xs font-normal">/ за сессию</em>
 				</span>
@@ -75,10 +82,19 @@
 					>
 						<Icon name="List" :size="18" />
 					</button>
+					<button
+						class="btn btn-sm btn-primary btn-soft btn-square"
+						@click="openReviews"
+					>
+						<Icon name="MessageCircleCode" :size="18" />
+					</button>
 					<button class="btn btn-sm btn-primary" @click="openBooking">
 						Записаться
 					</button>
 				</div>
+				<span class="w-full block -mt-1 text-xs font-normal opacity-65">
+					<em>Сессия длится 50 минут</em>
+				</span>
 			</div>
 		</div>
 	</div>
@@ -116,8 +132,13 @@ export default {
 				name: this.item.first_name,
 			})
 		},
-
-		openMore() {},
+		openReviews() {
+			this.$emit('reviews', {
+				reviews: JSON.parse(JSON.stringify(this.item.reviews_list)),
+				specialist: this.item.id,
+				tab: 'reviews',
+			})
+		},
 	},
 }
 </script>

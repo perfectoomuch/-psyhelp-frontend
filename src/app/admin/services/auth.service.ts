@@ -6,9 +6,11 @@ import { push } from 'notivue'
 import Cookies from 'js-cookie'
 import router from '@/routes'
 import { init, socket } from './socket.service'
+import { BidService } from './bid.service'
 
 export class AuthService {
 	private store = useAdminStore()
+	private bidService = new BidService()
 
 	async GetUser(): Promise<boolean> {
 		const sessionToken = Cookies.get('token')
@@ -19,6 +21,7 @@ export class AuthService {
 		try {
 			const response = await http.get('auth/me')
 			this.store.setUser(response.data)
+			await this.bidService.getAll()
 			await init()
 			return true
 		} catch (err) {
@@ -47,6 +50,18 @@ export class AuthService {
 				push.error('Неизвестная ошибка')
 			}
 
+			return false
+		}
+	}
+
+	async Logout() {
+		try {
+			const response = await http.get('auth/logout')
+			Cookies.remove('token')
+			window.open('/admin', '_self')
+			return true
+		} catch (err) {
+			console.log(err)
 			return false
 		}
 	}

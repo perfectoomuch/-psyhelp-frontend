@@ -52,9 +52,19 @@ export default {
 							name: 'adminChats',
 						},
 						{
+							path: '/admin/dashboard/reviews',
+							component: () => import('./pages/dashboard/reviews.vue'),
+							name: 'adminReviews',
+						},
+						{
 							path: '/admin/dashboard/methods',
 							component: () => import('./pages/dashboard/methods.vue'),
 							name: 'adminMethods',
+						},
+						{
+							path: '/admin/dashboard/transactions',
+							component: () => import('./pages/dashboard/transactions.vue'),
+							name: 'adminTransactions',
 						},
 					],
 				},

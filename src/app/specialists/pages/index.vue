@@ -1,7 +1,7 @@
 <template>
 	<Header
 		title="Все специалисты"
-		description="Ознакомьтесь всеми психологами на нашей платформе"
+		description="Полный каталог всех психологов"
 	/>
 
 	<div class="grid grid-cols-2 gap-2 mb-4" v-if="filterFormShow">

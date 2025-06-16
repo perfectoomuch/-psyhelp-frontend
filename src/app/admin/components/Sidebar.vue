@@ -35,6 +35,7 @@
 			<button
 				:class="[menuItemClass, isMinimal ? 'justify-center' : '']"
 				class="text-red-600 hover:bg-red-400/10 mt-auto"
+				@click="$emit('logout')"
 			>
 				<Icon name="LogOut" :size="18" />
 				<template v-if="!isMinimal"> Выйти </template>
@@ -81,6 +82,12 @@ export default {
 				route: '/admin/dashboard/chats',
 				icon: 'MessageSquareText',
 				value: 'adminChats',
+			},
+			{
+				name: 'Отзывы',
+				route: '/admin/dashboard/reviews',
+				icon: 'MessageSquareDot',
+				value: 'adminReviews',
 			},
 			{
 				name: 'Транзакции',

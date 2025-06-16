@@ -4,6 +4,7 @@ import { useMethodStore } from '../store/method.store'
 
 export class BidService {
 	private methodStore = useMethodStore()
+
 	async getAll() {
 		try {
 			const response = await http.get('admin/bids')

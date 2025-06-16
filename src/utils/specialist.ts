@@ -70,9 +70,9 @@ export const profession = (val?: string | string[]) => {
 
 export const route = (val?: string | string[]) => {
 	const obj = {
-		adult: 'Взрослые',
-		child: 'Дети',
-		couple: 'Пары',
+		adult: 'Для себя',
+		child: 'Для ребенка',
+		couple: 'Для пары',
 		supervision: 'Супервизор',
 	}
 

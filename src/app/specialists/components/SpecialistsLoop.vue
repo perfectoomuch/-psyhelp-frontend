@@ -4,7 +4,7 @@
 	</div>
 
 	<div role="alert" class="alert" v-if="!loading && specialists.length === 0">
-		<Info class="min-size-4 text-primary" />
+		<Icon name="Info" class="min-size-4 text-primary" />
 		<span>На данный момент нет специалистов. Вернитесь позже</span>
 	</div>
 
@@ -15,6 +15,7 @@
 			:item="item"
 			@video="onOpenVideo"
 			@request="onOpenBooking"
+			@reviews="onOpenReviews"
 		/>
 	</div>
 
@@ -38,12 +39,14 @@
 	</dialog>
 
 	<Booking ref="booking" />
+	<ReviewDialog ref="reviews" />
 </template>
 
 <script>
 import { X, Info } from 'lucide-vue-next'
 import SpecialistCard from './SpecialistCard.vue'
 import { Booking } from '../../../components/Booking'
+import ReviewDialog from './ReviewDialog.vue'
 export default {
 	props: ['specialists', 'loading'],
 	components: {
@@ -51,6 +54,7 @@ export default {
 		X,
 		Info,
 		Booking,
+		ReviewDialog,
 	},
 	data: () => ({
 		videoSource: '',
@@ -77,6 +81,9 @@ export default {
 		},
 		onOpenBooking(data) {
 			this.$refs.booking.openModal(data)
+		},
+		onOpenReviews(data) {
+			this.$refs.reviews.openModal(data)
 		},
 	},
 }

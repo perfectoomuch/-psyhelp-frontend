@@ -33,7 +33,7 @@ import {
 import { DatePicker } from 'vue-3-material-date-picker'
 import 'vue-3-material-date-picker/dist/style.css'
 export default {
-	props: ['modelValue', 'onlyBefore', 'onlyAfter'],
+	props: ['modelValue', 'onlyBefore', 'onlyAfter', 'allPeriod'],
 	components: {
 		DatePicker,
 		Dialog,
@@ -58,6 +58,13 @@ export default {
 	},
 	computed: {
 		limits() {
+			if (this.allPeriod) {
+				return {
+					min: this.$dayjs('1900-01-01').format('YYYY-MM-DD'),
+					max: this.$dayjs().add(1, 'year').format('YYYY-MM-DD'),
+				}
+			}
+
 			if (this.onlyBefore) {
 				return {
 					min: this.$dayjs('1900-01-01').format('YYYY-MM-DD'),

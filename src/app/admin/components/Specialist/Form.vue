@@ -1,32 +1,52 @@
 <template>
 	<div class="flex flex-col gap-4">
 		<div class="grid grid-cols-2 gap-4">
-			<img
-				class="w-full h-[250px] object-cover"
-				:src="$file(item.photo)"
-				v-if="item.photo"
-			/>
-			<div
-				v-else
-				class="w-full h-[250px] flex flex-col items-center justify-center bg-gray-100 rounded-lg"
-			>
-				<Icon name="Image" :size="20" class="opacity-65" />
+			<div class="relative">
+				<img
+					class="w-full h-[250px] object-cover"
+					:src="$file(item.photo)"
+					v-if="item.photo"
+				/>
+				<div
+					v-else
+					class="w-full h-[250px] flex flex-col items-center justify-center bg-gray-100 rounded-lg"
+				>
+					<Icon name="Image" :size="20" class="opacity-65" />
+				</div>
+
+				<button
+					class="btn btn-square btn-error btn-soft btn-sm absolute right-3 top-3"
+					v-if="item.photo"
+					@click="item.photo = ''"
+				>
+					<Icon name="Trash" :size="16" />
+				</button>
 			</div>
 
-			<video-player
-				v-if="item.video"
-				:src="$file(item.video)"
-				:loop="false"
-				:volume="1"
-				:controls="true"
-				aspectRatio="16:9"
-				class="min-h-[250px]"
-			/>
-			<div
-				v-else
-				class="w-full h-[250px] flex flex-col items-center justify-center bg-gray-100 rounded-lg"
-			>
-				<Icon name="Video" :size="20" class="opacity-65" />
+			<div class="relative">
+				<video-player
+					v-if="item.video"
+					:src="$file(item.video)"
+					:loop="false"
+					:volume="1"
+					:controls="true"
+					aspectRatio="16:9"
+					class="min-h-[250px]"
+				/>
+				<div
+					v-else
+					class="w-full h-[250px] flex flex-col items-center justify-center bg-gray-100 rounded-lg"
+				>
+					<Icon name="Video" :size="20" class="opacity-65" />
+				</div>
+
+				<button
+					class="btn btn-square btn-error btn-soft btn-sm absolute right-3 top-3"
+					v-if="item.video"
+					@click="item.video = ''"
+				>
+					<Icon name="Trash" :size="16" />
+				</button>
 			</div>
 		</div>
 
@@ -60,6 +80,9 @@
 
 			<label class="label">Имя</label>
 			<input class="input border" v-model="item.first_name" required />
+
+			<label class="label">Фамилия</label>
+			<input class="input border" v-model="item.last_name" required />
 
 			<label class="label">Дата рождения</label>
 			<MaterializeDatepicker v-model="item.birth_year" :onlyBefore="true">

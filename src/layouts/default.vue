@@ -15,7 +15,7 @@
 			</keep-alive>
 		</template>
 	</div>
-	<Navigation :name="$route.name" />
+	<Navigation v-if="!isKeyboardOpen" :name="$route.name" />
 </template>
 
 <script>
@@ -29,6 +29,8 @@ export default {
 	},
 	data: () => ({
 		questionsService: new QuestionsService(),
+		isKeyboardOpen: false,
+		initialHeight: 0,
 	}),
 	async created() {
 		await this.questionsService.fetchQuestions()
@@ -37,6 +39,63 @@ export default {
 		questionsStore() {
 			return useQuestionsStore()
 		},
+	},
+	methods: {
+		detectByViewport() {
+			const currentHeight = window.visualViewport
+				? window.visualViewport.height
+				: window.innerHeight
+
+			this.isKeyboardOpen = currentHeight < this.initialHeight - 100
+		},
+		onFocus() {
+			this.isKeyboardOpen = true
+		},
+		onBlur() {
+			// маленькая задержка — иногда нужно в мобилках
+			setTimeout(this.detectByViewport, 100)
+		},
+		addListeners() {
+			this.initialHeight = window.visualViewport
+				? window.visualViewport.height
+				: window.innerHeight
+
+			if (window.visualViewport) {
+				window.visualViewport.addEventListener('resize', this.detectByViewport)
+			} else {
+				window.addEventListener('resize', this.detectByViewport)
+			}
+
+			document
+				.querySelectorAll('input, textarea, [contenteditable=true]')
+				.forEach(el => {
+					el.addEventListener('focus', this.onFocus)
+					el.addEventListener('blur', this.onBlur)
+				})
+		},
+		removeListeners() {
+			if (window.visualViewport) {
+				window.visualViewport.removeEventListener(
+					'resize',
+					this.detectByViewport
+				)
+			} else {
+				window.removeEventListener('resize', this.detectByViewport)
+			}
+
+			document
+				.querySelectorAll('input, textarea, [contenteditable=true]')
+				.forEach(el => {
+					el.removeEventListener('focus', this.onFocus)
+					el.removeEventListener('blur', this.onBlur)
+				})
+		},
+	},
+	mounted() {
+		this.addListeners()
+	},
+	beforeUnmount() {
+		this.removeListeners()
 	},
 }
 </script>

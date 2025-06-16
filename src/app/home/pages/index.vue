@@ -205,7 +205,7 @@ export default defineComponent({
 				return {
 					title: 'Специалисты по вашим критериям',
 					description:
-						'На основе ваших ответов мы нашли психологов, которые наиболее соответствуют вашему запросу',
+						'На основе ваших ответов мы собрали психологов, которые наиболее соответствуют вашему запросу',
 				}
 			}
 		},
@@ -272,20 +272,24 @@ export default defineComponent({
 			const customAnswer = this.preFilterForm[this.activeIndex].custom_answer
 			const enableEnterVariant =
 				this.preFilterForm[this.activeIndex].enter_variant
-			if (enableEnterVariant) {
-				const answerBool =
-					customAnswer.length === 0 && answer.length === 0 ? false : true
 
-				if (!answerBool) {
-					this.$toast.error('Выберите хотя бы 1 вариант или введите свой')
-					return
-				}
-			} else {
-				if (answer.length === 0) {
-					this.$toast.error('Выберите хотя бы 1 вариант')
-					return
+			if (this.questionsStore.questions[this.activeIndex].required) {
+				if (enableEnterVariant) {
+					const answerBool =
+						customAnswer.length === 0 && answer.length === 0 ? false : true
+
+					if (!answerBool) {
+						this.$toast.error('Выберите хотя бы 1 вариант или введите свой')
+						return
+					}
+				} else {
+					if (answer.length === 0) {
+						this.$toast.error('Выберите хотя бы 1 вариант')
+						return
+					}
 				}
 			}
+
 			this.swiperInstance.slideNext()
 		},
 		async onBackToQuestions() {

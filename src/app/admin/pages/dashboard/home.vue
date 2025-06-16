@@ -20,7 +20,7 @@
 	</div>
 
 	<div role="alert" class="alert" v-if="!loading && bidsMap.length === 0">
-		<Info class="min-size-4 text-primary" />
+		<Icon name="Info" class="min-size-4 text-primary" />
 		<span>На данный момент нет заявок. Вернитесь позже</span>
 	</div>
 
@@ -93,6 +93,7 @@
 								<PopoverTrigger as-child>
 									<span class="whitespace-nowrap text-primary cursor-pointer">
 										{{ item.specialist.first_name }}
+										{{ item.specialist.last_name }}
 									</span>
 								</PopoverTrigger>
 								<PopoverContent class="w-80">
@@ -123,9 +124,12 @@
 												</span>
 											</div>
 										</div>
-										<button class="btn w-full btn-primary">
+										<router-link
+											:to="`/admin/dashboard/specialists/${item.specialist.id}`"
+											class="btn w-full btn-primary"
+										>
 											Открыть профиль
-										</button>
+										</router-link>
 									</div>
 								</PopoverContent>
 							</Popover>
@@ -305,7 +309,7 @@
 						<label class="label">Имя</label>
 						<input
 							class="input border"
-							:value="currentBid.specialist.first_name"
+							:value="`${currentBid.specialist.first_name} ${currentBid.specialist.last_name}`"
 							readonly
 						/>
 

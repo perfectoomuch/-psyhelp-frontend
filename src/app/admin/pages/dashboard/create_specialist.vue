@@ -3,7 +3,7 @@
 		<div class="flex flex-col mb-10">
 			<h1 class="text-2xl font-semibold">Добавить специалиста</h1>
 		</div>
-		<button class="btn" @click="onCreate" :disabled="loading">
+		<button class="btn" @click="onSave" :disabled="loading">
 			<span
 				class="loading loading-spinner text-primary w-4 opacity-50"
 				v-show="loading"
@@ -18,7 +18,7 @@
 	</div>
 
 	<div v-if="!loading && item !== null" class="grid grid-cols-2 gap-4">
-		<SpecialistForm @save="onSave" ref="form" />
+		<SpecialistForm ref="form" />
 	</div>
 </template>
 
