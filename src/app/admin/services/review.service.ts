@@ -1,11 +1,17 @@
 import { http } from '@/plugins/axios'
 import { push } from 'notivue'
-import type { ReviewSaveType } from '../types/review'
+import type {
+	PaginationType,
+	ReviewFilterType,
+	ReviewSaveType,
+} from '../types/review'
 
 export class ReviewService {
-	async getAll() {
+	async getAll(filters: ReviewFilterType, pagination: PaginationType) {
 		try {
-			const response = await http.get('admin/reviews')
+			const response = await http.post('admin/reviews', filters, {
+				params: pagination,
+			})
 			return response.data
 		} catch (err) {
 			console.log(err)

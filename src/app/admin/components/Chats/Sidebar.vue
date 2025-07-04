@@ -33,7 +33,7 @@
 						<div
 							class="min-w-12 h-12 rounded-full uppercase flex items-center justify-center bg-gray-100 border text-md font-semibold group-hover:bg-white"
 						>
-							<template v-if="item.customer.username">
+							<template v-if="item.customer?.username ?? false">
 								{{ Array.from(item.customer.username)[0] }}
 							</template>
 							<template v-else>-</template>
@@ -41,19 +41,27 @@
 						<div class="flex flex-col w-[calc(100%-52px)] gap-0.5">
 							<div class="flex justify-between">
 								<span class="font-medium">
-									{{ item.customer.first_name }}
-									{{ item.customer.last_name }}
+									{{ item.customer?.first_name ?? '' }}
+									{{ item.customer?.last_name ?? '' }}
 								</span>
-								<a
-									:href="`https://t.me/${item.customer.username}`"
-									class="text-primary"
-								>
-									@{{ item.customer.username }}
-								</a>
+								<template v-if="item.customer?.username ?? false">
+									<a
+										:href="`https://t.me/${item.customer.username}`"
+										class="text-primary"
+									>
+										@{{ item.customer.username }}
+									</a>
+								</template>
+								<span v-else>username отсутствует</span>
 							</div>
 							<p class="truncate">
 								Сообщение:
-								{{ item.last?.message }}
+								<template v-if="item.last?.transaction"
+									>Выставлен счет</template
+								>
+								<template v-else>
+									{{ item.last?.message }}
+								</template>
 							</p>
 						</div>
 					</div>
@@ -72,20 +80,24 @@ export default {
 	computed: {
 		getSearch() {
 			let result = []
+
 			if (this.search.trim().length === 0) {
 				result = this.dialogs
 			} else {
-				result = this.dialogs.filter(
-					el =>
+				result = this.dialogs.filter(el => {
+					if (!el.customer) return false // ⛔ если customer null — пропускаем
+
+					return (
 						el.customer.id == this.search ||
-						el.customer.username.includes(this.search) ||
-						`${el.customer.first_name.toLowerCase()} ${el.customer.last_name.toLowerCase()}`.includes(
+						el.customer.username?.includes(this.search) ||
+						`${el.customer.first_name?.toLowerCase()} ${el.customer.last_name?.toLowerCase()}`.includes(
 							this.search.toLowerCase()
 						)
-				)
+					)
+				})
 			}
 
-			return result.filter(el => el.customer !== null)
+			return result
 		},
 	},
 }

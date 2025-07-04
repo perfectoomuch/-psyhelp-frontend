@@ -140,7 +140,10 @@
 						<td>
 							<DropdownMenu>
 								<DropdownMenuTrigger>
-									<span class="whitespace-nowrap flex items-center gap-2">
+									<span
+										class="whitespace-nowrap flex items-center gap-2"
+										:class="getOneStatus(item.status)"
+									>
 										{{ getStatus(item.status) }}
 										<Icon name="ChevronDown" :size="14" />
 									</span>
@@ -154,6 +157,7 @@
 										v-for="(status, j) in getStatusList"
 										:key="j"
 										class="hover:bg-gray-100"
+										:class="getOneStatus(status.value)"
 										@click="updateBidStatusById(item.id, status.value)"
 									>
 										{{ status.name }}
@@ -209,6 +213,7 @@
 							<input
 								class="input border"
 								:value="getStatus(currentBid.status)"
+								:class="getOneStatus(currentBid.status)"
 								readonly
 							/>
 							<DropdownMenu>
@@ -228,6 +233,7 @@
 										:key="j"
 										class="hover:bg-gray-100"
 										@click="updateBidStatusById(currentBid.id, status.value)"
+										:class="getOneStatus(status.value)"
 									>
 										{{ status.name }}
 									</DropdownMenuItem>
@@ -235,7 +241,9 @@
 							</DropdownMenu>
 						</div>
 
-						<button class="btn btn-accent">Выставить счет на оплату</button>
+						<button class="btn btn-accent" @click="onOpenInvoice">
+							Выставить счет на оплату
+						</button>
 					</fieldset>
 
 					<fieldset
@@ -336,6 +344,8 @@
 			</template>
 		</SheetContent>
 	</Sheet>
+
+	<InvoiceDialog ref="invoiceDialog" />
 </template>
 
 <script>
@@ -364,6 +374,8 @@ import {
 	SheetTitle,
 	SheetTrigger,
 } from '@/components/ui/sheet'
+import InvoiceDialog from '../../components/Transactions/InvoiceDialog.vue'
+import { getOneStatusByValue } from '@/utils/allStatus'
 
 export default {
 	components: {
@@ -382,6 +394,7 @@ export default {
 		SheetHeader,
 		SheetTitle,
 		SheetTrigger,
+		InvoiceDialog,
 	},
 	data: () => ({
 		bidService: new BidService(),
@@ -399,6 +412,7 @@ export default {
 		getRoute,
 		getStatus,
 		getStatusList,
+		getOneStatusByValue,
 	}),
 	async created() {
 		await this.getAll()
@@ -447,6 +461,17 @@ export default {
 			}
 			this.search.result = await this.bidService.getBySearch(this.search.text)
 			this.search.used = true
+		},
+		onOpenInvoice() {
+			this.$refs.invoiceDialog.openAction(true, {
+				customer: this.currentBid.customer,
+				specialist: this.currentBid.specialist,
+			})
+		},
+		getOneStatus(status) {
+			const find = this.getOneStatusByValue(status)
+			if (find) return find.class
+			return ''
 		},
 	},
 }

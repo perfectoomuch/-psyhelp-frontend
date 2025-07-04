@@ -385,7 +385,9 @@ export default {
 			return this.methodStore.methods
 		},
 		methodsSelected() {
-			return this.item.methods.map(el => this.methodStore.getMethod(el).name)
+			return this.item.methods
+				.map(el => this.methodStore.getMethod(el)?.name ?? '')
+				.filter(el => el.length !== 0)
 		},
 	},
 	methods: {

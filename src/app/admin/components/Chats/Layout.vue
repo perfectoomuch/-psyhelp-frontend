@@ -45,7 +45,6 @@ export default {
 	},
 	mounted() {
 		socket.on('message', async data => {
-			console.log(data)
 			this.updateDialog(data.id, data.message)
 			await this.updateRoom(data.customer_id)
 		})

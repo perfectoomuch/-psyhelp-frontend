@@ -32,8 +32,8 @@
 						<Popover>
 							<PopoverTrigger as-child>
 								<span class="whitespace-nowrap text-primary cursor-pointer">
-									{{ item.specialist.first_name }}
-									{{ item.specialist.last_name }}
+									{{ item.specialist?.first_name }}
+									{{ item.specialist?.last_name }}
 								</span>
 							</PopoverTrigger>
 							<PopoverContent class="w-80">

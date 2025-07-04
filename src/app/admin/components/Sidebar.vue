@@ -90,7 +90,7 @@ export default {
 				value: 'adminReviews',
 			},
 			{
-				name: 'Транзакции',
+				name: 'Платежи',
 				route: '/admin/dashboard/transactions',
 				icon: 'Landmark',
 				value: 'adminTransactions',

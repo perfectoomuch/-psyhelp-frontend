@@ -44,7 +44,9 @@
 							@{{ data.customer.username }}
 						</a>
 					</div>
-					<button class="btn btn-sm btn-primary">Выставить счет</button>
+					<button class="btn btn-sm btn-primary" @click="onOpenInvoice">
+						Выставить счет
+					</button>
 				</div>
 			</div>
 			<div id="messages" class="flex-1 flex flex-col overflow-y-auto p-4">
@@ -60,11 +62,17 @@
 							<template v-if="item.from === 'customer'">
 								{{ data.customer.first_name }} {{ data.customer.last_name }}
 							</template>
+							<template v-if="'transaction' in item">
+								Выставлен счет на оплату
+							</template>
 							<time class="text-xs opacity-50">
 								{{ $dayjs(item.date).format('DD/MM/YYYY HH:mm') }}
 							</time>
 						</div>
-						<div class="chat-bubble text-sm w-fit">
+						<div
+							class="chat-bubble text-sm w-fit"
+							:class="['transaction' in item && 'bg-primary']"
+						>
 							<template v-if="item.attachments.length > 0">
 								<template v-for="val in item.attachments" :key="val">
 									<div class="col-span-2">
@@ -88,11 +96,49 @@
 								</template>
 							</template>
 							<span
+								v-if="!item?.transaction"
 								class="block"
 								:class="[item.attachments.length > 0 ? 'mt-2' : '']"
 							>
 								{{ item.message }}
 							</span>
+							<div
+								v-if="item?.transaction && item.transaction.specialist"
+								class="flex flex-col text-white"
+							>
+								<p
+									class="mb-1 whitespace-normal text-wrap whitespace-normal break-words"
+								>
+									ID: {{ item.transaction.id }} <br /><br />
+									{{ item.transaction.message }}
+								</p>
+								<div class="flex flex-col gap-1 whitespace-nowrap">
+									<div class="grid grid-cols-2 gap-2">
+										<span>Специалист:</span>
+										<router-link
+											:to="`/admin/dashboard/specialists/${item.transaction.specialist.id}`"
+											class="text-white underline"
+										>
+											{{ item.transaction.specialist.first_name }}
+											{{ item.transaction.specialist.last_name }}
+										</router-link>
+									</div>
+									<div class="grid grid-cols-2 gap-2">
+										<span>Сумма:</span>
+										<span>
+											{{ $currency(item.transaction.total) }}
+										</span>
+									</div>
+									<div class="grid grid-cols-2 gap-2">
+										<span>Статус:</span>
+										<span>
+											{{
+												status(item.transaction.status).getStatusByValue.name
+											}}
+										</span>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</template>
@@ -159,16 +205,25 @@
 			</div>
 		</div>
 	</div>
+	<InvoiceDialog ref="invoiceDialog" @update="onInvoiceUpdate" />
 </template>
 
 <script>
 import dayjs from 'dayjs'
 import upload from '../../services/upload.service'
 import { emitUp } from '@/utils/emitUp'
+import InvoiceDialog from '../Transactions/InvoiceDialog.vue'
+import { status } from '@/utils/transaction'
+import { ChatService } from '../../services/chat.service'
 
 export default {
 	props: ['data', 'loading'],
+	components: {
+		InvoiceDialog,
+	},
 	data: () => ({
+		chatService: new ChatService(),
+		status,
 		form: {
 			customer: null,
 			message: '',
@@ -224,6 +279,25 @@ export default {
 			const result = await emitUp(this, 'onAdminMessage', this.form)
 			this.form.message = ''
 			this.form.attachments = []
+		},
+		onOpenInvoice() {
+			this.$refs.invoiceDialog.openAction(true, {
+				customer: this.data.customer,
+			})
+		},
+		async onInvoiceUpdate() {
+			// this.$props.loading = true
+			// const room = await this.chatService.getByCustomer(
+			// 	this.$props.data.customer.id
+			// )
+			// console.log(room)
+
+			// this.$props.data = room
+			// this.$props.loading = false
+			window.open(
+				`/admin/dashboard/chats?customer=${this.data.customer.id}`,
+				'_self'
+			)
 		},
 	},
 }

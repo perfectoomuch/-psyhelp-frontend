@@ -134,7 +134,7 @@ export default {
 		},
 		openReviews() {
 			this.$emit('reviews', {
-				reviews: JSON.parse(JSON.stringify(this.item.reviews_list)),
+				// reviews: JSON.parse(JSON.stringify(this.item.reviews_list)),
 				specialist: this.item.id,
 				tab: 'reviews',
 			})

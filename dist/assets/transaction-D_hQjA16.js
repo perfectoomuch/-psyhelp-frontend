@@ -1,0 +1,1 @@
+const u=t=>{const s={failed:"Провален",canceled:"Отменен",pending:"Ожидается оплата",success:"Оплачено",refunded:"Возврат"},n=Object.entries(s).map(e=>({value:e[0],name:e[1]}));let a=null;return t&&(a=n.find(e=>e.value===t)),{obj:s,list:n,getStatusByValue:a}};export{u as s};
