@@ -27,5 +27,16 @@ export default defineConfig(({ mode }) => {
 				'/api': env.VITE_APP_HOME_URL,
 			},
 		},
+		build: {
+			// по умолчанию true
+			manifest: true,
+			rollupOptions: {
+				output: {
+					entryFileNames: 'assets/[name].[hash].js',
+					chunkFileNames: 'assets/[name].[hash].js',
+					assetFileNames: 'assets/[name].[hash][extname]',
+				},
+			},
+		},
 	}
 })

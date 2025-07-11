@@ -27,6 +27,13 @@
 		</Select>
 	</div>
 
+	<input
+		v-model="search"
+		type="text"
+		class="input w-full mb-4 bg-white shadow-sm"
+		placeholder="Поиск по ID специалиста"
+	/>
+
 	<SpecialistsLoop
 		:specialists="specialistsStore.specialists"
 		:loading="specialistsStore.loading"
@@ -77,6 +84,7 @@ export default {
 		questionsService: new QuestionsService(),
 		afterFilterForm: [],
 		filterFormShow: false,
+		search: '',
 	}),
 	async created() {
 		await this.questionsService.fetchQuestions()
@@ -99,6 +107,13 @@ export default {
 	},
 	computed: {
 		specialistsStore() {
+			const all = useSpecialistsStore()
+			if (this.search.trim().length > 0) {
+				return {
+					specialists: all.specialists.filter(el => el.id === this.search),
+					loading: all.loading,
+				}
+			}
 			return useSpecialistsStore()
 		},
 		userStore() {

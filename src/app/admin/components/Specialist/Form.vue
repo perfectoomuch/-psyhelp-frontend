@@ -118,6 +118,9 @@
 		>
 			<legend class="fieldset-legend">Проф. профиль</legend>
 
+			<label class="label">Часы работа</label>
+			<input class="input border" v-model="item.work_times" />
+
 			<label class="label">Стоимость сессии</label>
 			<input
 				class="input border"
@@ -340,6 +343,7 @@ export default {
 			sessions: '',
 			religion: null,
 			experience_ethnic_group: '',
+			work_times: '',
 		},
 		gender,
 		profession,

@@ -1,1 +1,0 @@
-import{h as e,a4 as t}from"./index-BeL3-aS9.js";const n=async o=>{try{const a=new FormData;a.append("file",o);const r=await e.post("upload",a,{headers:{"Content-Type":"multipart/form-data"}});return t.success("Файл загружен"),r.data.filename}catch(a){console.log(a),t.error("Ошибка при загрузке файла")}};export{n as u};

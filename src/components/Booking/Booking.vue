@@ -23,6 +23,11 @@
 					<DialogTitle class="text-lg font-semibold">
 						Записаться к специалисту
 					</DialogTitle>
+					<DialogDescription
+						v-if="specialist?.work_times && specialist.work_times.length > 0"
+					>
+						Принимает: {{ specialist.work_times }}
+					</DialogDescription>
 				</DialogHeader>
 
 				<form
@@ -145,6 +150,7 @@ export default {
 		specialist: {
 			id: '',
 			name: '',
+			work_times: '',
 		},
 		showTakeDateError: false,
 		showSuccessAlert: false,
@@ -175,7 +181,11 @@ export default {
 				this.showSuccessAlert = true
 			}
 		},
-		openModal({ specialist_id, name }) {
+		openModal(data) {
+			console.log(data.work_times)
+
+			const { specialist_id, name } = data
+
 			this.showTakeDateError = false
 			this.showSuccessAlert = false
 			this.form.date = null
@@ -184,9 +194,11 @@ export default {
 			this.specialist = {
 				id: '',
 				name: '',
+				work_times: '',
 			}
 			this.specialist.name = name
 			this.specialist.id = specialist_id
+			this.specialist.work_times = data.work_times
 			this.open = true
 		},
 	},

@@ -5,7 +5,7 @@
 
 	<div role="alert" class="alert" v-if="!loading && specialists.length === 0">
 		<Icon name="Info" class="min-size-4 text-primary" />
-		<span>На данный момент нет специалистов. Вернитесь позже</span>
+		<span>Нет результатов</span>
 	</div>
 
 	<div class="grid grid-cols-1 gap-4" v-if="!loading && specialists.length > 0">
@@ -80,6 +80,8 @@ export default {
 			if (modal) modal.close()
 		},
 		onOpenBooking(data) {
+			console.log(data)
+
 			this.$refs.booking.openModal(data)
 		},
 		onOpenReviews(data) {

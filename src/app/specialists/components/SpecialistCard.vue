@@ -65,6 +65,11 @@
 						<span class="border-b text-accent">Отзывы:</span>
 						{{ item.reviews_count }}
 					</p>
+					<p v-if="item?.work_times && item.work_times.length > 0">
+						<span class="text-[16px] text-normal">🕐&nbsp;</span>
+						<span class="text-accent">Принимает:</span>
+						{{ item.work_times }}
+					</p>
 				</div>
 			</transition>
 
@@ -130,6 +135,7 @@ export default {
 			this.$emit('request', {
 				specialist_id: this.item.id,
 				name: this.item.first_name,
+				work_times: this.item?.work_times ?? '',
 			})
 		},
 		openReviews() {
